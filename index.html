@@ -28,6 +28,25 @@
             margin: 20px;
             border: 1px solid #f1f5f9;
         }
+        .info-section {
+            max-height: 460px; /* Approximately 10 rows with spacing */
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .info-section::-webkit-scrollbar {
+            width: 6px;
+        }
+        .info-section::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        .info-section::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .info-section::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -93,7 +112,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-800">Browser Details</h3>
                     </div>
-                    <div id="browser-info" class="space-y-3">
+                    <div id="browser-info" class="space-y-3 info-section">
                         <!-- Browser info will be populated here -->
                     </div>
                 </div>
@@ -106,7 +125,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-800">System Information</h3>
                     </div>
-                    <div id="system-info" class="space-y-3">
+                    <div id="system-info" class="space-y-3 info-section">
                         <!-- System info will be populated here -->
                     </div>
                 </div>
@@ -119,7 +138,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-800">Display & Device</h3>
                     </div>
-                    <div id="display-info" class="space-y-3">
+                    <div id="display-info" class="space-y-3 info-section">
                         <!-- Display info will be populated here -->
                     </div>
                 </div>
@@ -132,7 +151,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-800">Location & Network</h3>
                     </div>
-                    <div id="network-info" class="space-y-3">
+                    <div id="network-info" class="space-y-3 info-section">
                         <!-- Network info will be populated here -->
                     </div>
                 </div>
@@ -145,7 +164,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-800">Technical Features</h3>
                     </div>
-                    <div id="technical-info" class="space-y-3">
+                    <div id="technical-info" class="space-y-3 info-section">
                         <!-- Technical info will be populated here -->
                     </div>
                 </div>
@@ -158,7 +177,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-800">Security & Privacy</h3>
                     </div>
-                    <div id="security-info" class="space-y-3">
+                    <div id="security-info" class="space-y-3 info-section">
                         <!-- Security info will be populated here -->
                     </div>
                 </div>
@@ -171,7 +190,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-800">Performance & Memory</h3>
                     </div>
-                    <div id="performance-info" class="space-y-3">
+                    <div id="performance-info" class="space-y-3 info-section">
                         <!-- Performance info will be populated here -->
                     </div>
                 </div>
@@ -184,7 +203,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-gray-800">Media & Audio</h3>
                     </div>
-                    <div id="media-info" class="space-y-3">
+                    <div id="media-info" class="space-y-3 info-section">
                         <!-- Media info will be populated here -->
                     </div>
                 </div>
@@ -506,34 +525,74 @@
             document.getElementById('timestamp-display').textContent = 
                 `🔍 Your browser data - Generated on ${new Date().toLocaleString()}`;
 
-            // Browser Details - Essential information
+            // Browser Details - Comprehensive information
             const browserInfo = document.getElementById('browser-info');
             browserInfo.innerHTML = '';
             
-            // Core browser info
-            browserInfo.appendChild(createInfoRow('Browser', `${browserName} (${variant})`));
+            // Basic browser info
+            browserInfo.appendChild(createInfoRow('Browser', browserName));
+            browserInfo.appendChild(createInfoRow('Variant', getBrowserInfo().variant));
             browserInfo.appendChild(createInfoRow('Version', browserVersion));
-            browserInfo.appendChild(createInfoRow('Engine', `${engineName} ${engineVersion}`));
-            browserInfo.appendChild(createInfoRow('Language', navigator.language));
+            browserInfo.appendChild(createInfoRow('Major Version', browserVersion.split('.')[0]));
+            browserInfo.appendChild(createInfoRow('Engine', engineName));
+            browserInfo.appendChild(createInfoRow('Engine Version', getBrowserInfo().engineVersion));
+            browserInfo.appendChild(createInfoRow('Vendor', navigator.vendor || 'Unknown'));
+            
+            // Browser capabilities
+            const browserDetails = getBrowserInfo();
+            browserInfo.appendChild(createInfoRow('Java Enabled', browserDetails.javaEnabled));
             browserInfo.appendChild(createInfoRow('Cookies Enabled', browserDetails.cookiesEnabled));
+            browserInfo.appendChild(createInfoRow('Online Status', browserDetails.onlineStatus));
+            browserInfo.appendChild(createInfoRow('PDF Viewer', browserDetails.pdfViewer));
+            browserInfo.appendChild(createInfoRow('WebDriver', browserDetails.webDriver));
+            
+            // Language and location
+            browserInfo.appendChild(createInfoRow('Language', navigator.language));
+            // browserInfo.appendChild(createInfoRow('Languages', navigator.languages.slice(0, 3).join(', ')));
             browserInfo.appendChild(createInfoRow('Do Not Track', browserDetails.doNotTrack));
-            if (browserDetails.webDriver) {
-                browserInfo.appendChild(createInfoRow('WebDriver Active', browserDetails.webDriver));
+            
+            // Browser identification
+            browserInfo.appendChild(createInfoRow('Product Sub', browserDetails.productSub));
+            browserInfo.appendChild(createInfoRow('Build ID', browserDetails.buildID));
+            if (browserDetails.oscpu !== 'Unknown') {
+                browserInfo.appendChild(createInfoRow('OS CPU', browserDetails.oscpu));
             }
+            
+            // Plugins and extensions
+            browserInfo.appendChild(createInfoRow('MIME Types', browserDetails.mimeTypes));
+            browserInfo.appendChild(createInfoRow('Plugins Count', browserDetails.plugins));
+            browserInfo.appendChild(createInfoRow('History Length', browserDetails.historyLength));
 
-            // System Information - Key details
+            // System Information - Enhanced details
             const systemInfo = document.getElementById('system-info');
             systemInfo.innerHTML = '';
-            systemInfo.appendChild(createInfoRow('Operating System', `${os} ${osVersion}`));
+            systemInfo.appendChild(createInfoRow('Operating System', os));
+            systemInfo.appendChild(createInfoRow('OS Version', osVersion));
             systemInfo.appendChild(createInfoRow('Architecture', architecture));
+            systemInfo.appendChild(createInfoRow('Platform', navigator.platform));
+            
+            // Hardware information
             systemInfo.appendChild(createInfoRow('CPU Cores', browserDetails.hardwareConcurrency));
             systemInfo.appendChild(createInfoRow('Device Memory', browserDetails.deviceMemory !== 'Unknown' ? `${browserDetails.deviceMemory} GB` : 'Unknown'));
             systemInfo.appendChild(createInfoRow('Max Touch Points', navigator.maxTouchPoints || 0));
             
-            // Connection information (if available)
-            if (browserDetails.connection && browserDetails.connection.effectiveType) {
-                systemInfo.appendChild(createInfoRow('Connection Type', browserDetails.connection.effectiveType));
+            // Additional system details
+            if (browserDetails.oscpu !== 'Unknown') {
+                systemInfo.appendChild(createInfoRow('OS CPU Info', browserDetails.oscpu));
             }
+            
+            // Connection information (if available)
+            if (browserDetails.connection) {
+                const conn = browserDetails.connection;
+                systemInfo.appendChild(createInfoRow('Connection Type', conn.effectiveType || 'Unknown'));
+                if (conn.downlink) {
+                    systemInfo.appendChild(createInfoRow('Connection Speed', `${conn.downlink} Mbps`));
+                }
+            }
+            
+            // Browser session info
+            systemInfo.appendChild(createInfoRow('Referrer', browserDetails.referrer));
+            systemInfo.appendChild(createInfoRow('Page History', `${browserDetails.historyLength} entries`));
 
             // Display & Device
             const displayInfo = document.getElementById('display-info');
@@ -618,44 +677,17 @@
             performanceInfoEl.appendChild(createInfoRow('DOM Ready Time', performanceInfo.domReady));
             performanceInfoEl.appendChild(createInfoRow('Navigation Type', performance.navigation?.type || 'Unknown'));
 
-            // Media & Audio - Comprehensive media capabilities
+            // Media & Audio
             const mediaInfo = document.getElementById('media-info');
             mediaInfo.innerHTML = '';
-            
-            // Audio format support
             mediaInfo.appendChild(createInfoRow('MP3 Support', mediaCapabilities.mp3));
             mediaInfo.appendChild(createInfoRow('WAV Support', mediaCapabilities.wav));
             mediaInfo.appendChild(createInfoRow('OGG Support', mediaCapabilities.ogg));
-            mediaInfo.appendChild(createInfoRow('M4A Support', mediaCapabilities.m4a));
-            
-            // Video format support
             mediaInfo.appendChild(createInfoRow('MP4 Support', mediaCapabilities.mp4));
             mediaInfo.appendChild(createInfoRow('WebM Support', mediaCapabilities.webm));
             mediaInfo.appendChild(createInfoRow('H.264 Support', mediaCapabilities.h264));
             mediaInfo.appendChild(createInfoRow('AV1 Support', mediaCapabilities.av1));
-            
-            // Advanced media APIs
-            mediaInfo.appendChild(createInfoRow('Web Audio API', browserDetails.webAudio));
-            mediaInfo.appendChild(createInfoRow('Media Devices API', browserDetails.mediaDevices));
-            mediaInfo.appendChild(createInfoRow('getUserMedia API', browserDetails.getUserMedia));
-            mediaInfo.appendChild(createInfoRow('WebRTC Support', browserDetails.webRTC));
-            
-            // Media stream capabilities
-            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-                navigator.mediaDevices.enumerateDevices().then(devices => {
-                    const audioInputs = devices.filter(device => device.kind === 'audioinput').length;
-                    const videoInputs = devices.filter(device => device.kind === 'videoinput').length;
-                    const audioOutputs = devices.filter(device => device.kind === 'audiooutput').length;
-                    
-                    if (audioInputs > 0) mediaInfo.appendChild(createInfoRow('Audio Inputs', audioInputs));
-                    if (videoInputs > 0) mediaInfo.appendChild(createInfoRow('Video Inputs', videoInputs));
-                    if (audioOutputs > 0) mediaInfo.appendChild(createInfoRow('Audio Outputs', audioOutputs));
-                }).catch(() => {
-                    mediaInfo.appendChild(createInfoRow('Media Devices', 'Permission required'));
-                });
-            } else {
-                mediaInfo.appendChild(createInfoRow('Media Device Detection', 'Not supported'));
-            }
+            mediaInfo.appendChild(createInfoRow('Web Audio API', 'AudioContext' in window));
 
             // Session Information
             const sessionInfo = document.getElementById('session-info');
