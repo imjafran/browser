@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Info Detective</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .card-shadow:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .info-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px;
+            border: 1px solid #f1f5f9;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold gradient-text mb-4">🔍 Browser Info Detective</h1>
+            <p class="text-xl text-gray-600 mb-8">Comprehensive browser and system information detection tool</p>
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-center gap-4">
+                <!-- Reset button for shared data - only visible when viewing shared data -->
+                <button id="reset-to-my-data-btn" onclick="resetToMyData()" 
+                        class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-sm" 
+                        style="display: none;">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    View My Browser
+                </button>
+                
+                <button onclick="shareInfo()" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
+                    </svg>
+                    Share Link
+                </button>
+                
+                <button onclick="copyImageToClipboard()" 
+                        class="bg-slate-600 hover:bg-slate-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                    Copy Image
+                </button>
+                
+                <button onclick="downloadAsImage()" 
+                        class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    Download Image
+                </button>
+                
+            </div>
+        </div>
+
+        <!-- Info Container for Image Download -->
+        <div id="info-container" class="info-container">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Browser Information Report</h2>
+                <p class="text-gray-600" id="timestamp-display"></p>
+            </div>
+
+            <!-- Grid Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- Browser Details -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-shadow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 text-xl font-bold mr-3">
+                            🌐
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Browser Details</h3>
+                    </div>
+                    <div id="browser-info" class="space-y-3">
+                        <!-- Browser info will be populated here -->
+                    </div>
+                </div>
+
+                <!-- System Information -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-shadow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 text-xl font-bold mr-3">
+                            💻
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">System Information</h3>
+                    </div>
+                    <div id="system-info" class="space-y-3">
+                        <!-- System info will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Display & Device -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-shadow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 text-xl font-bold mr-3">
+                            🖥️
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Display & Device</h3>
+                    </div>
+                    <div id="display-info" class="space-y-3">
+                        <!-- Display info will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Location & Network -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-shadow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 text-xl font-bold mr-3">
+                            🌍
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Location & Network</h3>
+                    </div>
+                    <div id="network-info" class="space-y-3">
+                        <!-- Network info will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Technical Features -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-shadow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 text-xl font-bold mr-3">
+                            ⚙️
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Technical Features</h3>
+                    </div>
+                    <div id="technical-info" class="space-y-3">
+                        <!-- Technical info will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Security & Privacy -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-shadow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 text-xl font-bold mr-3">
+                            🔒
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Security & Privacy</h3>
+                    </div>
+                    <div id="security-info" class="space-y-3">
+                        <!-- Security info will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Performance & Memory -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-shadow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 text-xl font-bold mr-3">
+                            📊
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Performance & Memory</h3>
+                    </div>
+                    <div id="performance-info" class="space-y-3">
+                        <!-- Performance info will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Media & Audio -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-shadow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 text-xl font-bold mr-3">
+                            🎵
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Media & Audio</h3>
+                    </div>
+                    <div id="media-info" class="space-y-3">
+                        <!-- Media info will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Session Information -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 card-shadow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 text-xl font-bold mr-3">
+                            📋
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Session Information</h3>
+                    </div>
+                    <div id="session-info" class="space-y-3">
+                        <!-- Session info will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-12 text-gray-500">
+            <p class="text-sm">All data is processed locally in your browser. No information is stored on our servers.</p>
+        </div>
+    </div>
+
+    <script>
+        function createInfoRow(label, value, copyable = false) {
+            const row = document.createElement('div');
+            row.className = 'flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg';
+            
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'text-sm font-medium text-gray-600';
+            labelSpan.textContent = label;
+            
+            const valueContainer = document.createElement('div');
+            valueContainer.className = 'flex items-center gap-2';
+            
+            const valueSpan = document.createElement('span');
+            valueSpan.className = 'text-sm font-semibold text-gray-800';
+            
+            if (typeof value === 'boolean') {
+                valueSpan.className += value ? ' text-green-600' : ' text-red-600';
+                valueSpan.textContent = value ? 'Yes' : 'No';
+            } else {
+                valueSpan.textContent = value;
+            }
+            
+            valueContainer.appendChild(valueSpan);
+            
+            if (copyable) {
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'text-gray-400 hover:text-gray-600 transition-colors';
+                copyBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>';
+                copyBtn.onclick = () => copyToClipboard(value);
+                valueContainer.appendChild(copyBtn);
+            }
+            
+            row.appendChild(labelSpan);
+            row.appendChild(valueContainer);
+            
+            return row;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied to clipboard!', 'success');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy', 'error');
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white font-medium z-50 ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function getBrowserInfo() {
+            const ua = navigator.userAgent;
+            let browserName = 'Unknown';
+            let browserVersion = 'Unknown';
+            let engineName = 'Unknown';
+            let engineVersion = 'Unknown';
+            let browserDetails = {};
+
+            // Browser detection with more details
+            if (ua.includes('Chrome') && !ua.includes('Edg')) {
+                browserName = 'Chrome';
+                browserVersion = ua.match(/Chrome\/([0-9.]+)/)?.[1] || 'Unknown';
+                engineName = 'Blink';
+                engineVersion = ua.match(/Chrome\/([0-9.]+)/)?.[1] || 'Unknown';
+                
+                // Detect Chrome variants
+                if (ua.includes('Chromium')) browserDetails.variant = 'Chromium';
+                else if (ua.includes('Chrome')) browserDetails.variant = 'Google Chrome';
+                
+            } else if (ua.includes('Firefox')) {
+                browserName = 'Firefox';
+                browserVersion = ua.match(/Firefox\/([0-9.]+)/)?.[1] || 'Unknown';
+                engineName = 'Gecko';
+                engineVersion = ua.match(/Gecko\/([0-9]+)/)?.[1] || 'Unknown';
+                
+                // Detect Firefox variants
+                if (ua.includes('ESR')) browserDetails.variant = 'Firefox ESR';
+                else browserDetails.variant = 'Firefox';
+                
+            } else if (ua.includes('Safari') && !ua.includes('Chrome')) {
+                browserName = 'Safari';
+                browserVersion = ua.match(/Version\/([0-9.]+)/)?.[1] || 'Unknown';
+                engineName = 'WebKit';
+                engineVersion = ua.match(/Safari\/([0-9.]+)/)?.[1] || 'Unknown';
+                browserDetails.variant = 'Safari';
+                
+            } else if (ua.includes('Edg')) {
+                browserName = 'Edge';
+                browserVersion = ua.match(/Edg\/([0-9.]+)/)?.[1] || 'Unknown';
+                engineName = 'Blink';
+                engineVersion = ua.match(/Edg\/([0-9.]+)/)?.[1] || 'Unknown';
+                browserDetails.variant = 'Microsoft Edge';
+                
+            } else if (ua.includes('Opera') || ua.includes('OPR')) {
+                browserName = 'Opera';
+                browserVersion = ua.match(/(?:Opera|OPR)\/([0-9.]+)/)?.[1] || 'Unknown';
+                engineName = 'Blink';
+                browserDetails.variant = 'Opera';
+            }
+
+            // Additional browser capabilities and information
+            const additionalInfo = {
+                // Browser capabilities
+                javaEnabled: navigator.javaEnabled ? navigator.javaEnabled() : false,
+                cookiesEnabled: navigator.cookieEnabled,
+                onlineStatus: navigator.onLine,
+                
+                // Browser window info
+                historyLength: history.length,
+                referrer: document.referrer || 'Direct',
+                
+                // Advanced features
+                webAssembly: 'WebAssembly' in window,
+                sharedArrayBuffer: 'SharedArrayBuffer' in window,
+                webWorkers: 'Worker' in window,
+                serviceWorker: 'serviceWorker' in navigator,
+                webGL: 'WebGLRenderingContext' in window,
+                webGL2: 'WebGL2RenderingContext' in window,
+                webRTC: !!(window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection),
+                
+                // Storage and security
+                localStorage: 'localStorage' in window,
+                sessionStorage: 'sessionStorage' in window,
+                indexedDB: 'indexedDB' in window,
+                webCrypto: 'crypto' in window && 'subtle' in window.crypto,
+                
+                // Media capabilities
+                webAudio: 'AudioContext' in window || 'webkitAudioContext' in window,
+                mediaDevices: 'mediaDevices' in navigator,
+                getUserMedia: 'getUserMedia' in navigator || 'webkitGetUserMedia' in navigator || 'mozGetUserMedia' in navigator,
+                
+                // Modern web features
+                fetch: 'fetch' in window,
+                promises: 'Promise' in window,
+                modules: 'noModule' in document.createElement('script'),
+                intersectionObserver: 'IntersectionObserver' in window,
+                mutationObserver: 'MutationObserver' in window,
+                
+                // Browser behavior
+                doNotTrack: navigator.doNotTrack || 'Not set',
+                sendBeacon: 'sendBeacon' in navigator,
+                
+                // PDF and file handling
+                pdfViewer: navigator.pdfViewerEnabled || false,
+                mimeTypes: navigator.mimeTypes ? navigator.mimeTypes.length : 0,
+                plugins: navigator.plugins ? navigator.plugins.length : 0,
+                
+                // Connection and performance
+                connection: navigator.connection || navigator.mozConnection || navigator.webkitConnection,
+                hardwareConcurrency: navigator.hardwareConcurrency || 'Unknown',
+                deviceMemory: navigator.deviceMemory || 'Unknown',
+                
+                // Browser security
+                webDriver: navigator.webdriver || false,
+                permissions: 'permissions' in navigator,
+                credentials: 'credentials' in navigator,
+                
+                // Browser identification
+                buildID: navigator.buildID || 'Unknown',
+                oscpu: navigator.oscpu || 'Unknown',
+                productSub: navigator.productSub || 'Unknown',
+                vendorSub: navigator.vendorSub || 'Unknown'
+            };
+
+            return { 
+                browserName, 
+                browserVersion, 
+                engineName, 
+                engineVersion, 
+                variant: browserDetails.variant || browserName,
+                ...additionalInfo 
+            };
+        }
+
+        function getOperatingSystem() {
+            const ua = navigator.userAgent;
+            let os = 'Unknown';
+            let osVersion = 'Unknown';
+            let architecture = 'Unknown';
+
+            if (ua.includes('Windows')) {
+                os = 'Windows';
+                if (ua.includes('Windows NT 10.0')) osVersion = '10/11';
+                else if (ua.includes('Windows NT 6.3')) osVersion = '8.1';
+                else if (ua.includes('Windows NT 6.2')) osVersion = '8';
+                else if (ua.includes('Windows NT 6.1')) osVersion = '7';
+                
+                if (ua.includes('Win64') || ua.includes('x64')) architecture = 'x64';
+                else if (ua.includes('WOW64')) architecture = 'x86 on x64';
+                else architecture = 'x86';
+            } else if (ua.includes('Mac OS X')) {
+                os = 'macOS';
+                const match = ua.match(/Mac OS X ([0-9_]+)/);
+                if (match) osVersion = match[1].replace(/_/g, '.');
+                if (ua.includes('Intel')) architecture = 'Intel';
+                else if (ua.includes('PPC')) architecture = 'PowerPC';
+            } else if (ua.includes('Linux')) {
+                os = 'Linux';
+                if (ua.includes('x86_64')) architecture = 'x64';
+                else if (ua.includes('i686')) architecture = 'x86';
+            } else if (ua.includes('Android')) {
+                os = 'Android';
+                const match = ua.match(/Android ([0-9.]+)/);
+                if (match) osVersion = match[1];
+            } else if (ua.includes('iOS')) {
+                os = 'iOS';
+                const match = ua.match(/OS ([0-9_]+)/);
+                if (match) osVersion = match[1].replace(/_/g, '.');
+            }
+
+            return { os, osVersion, architecture };
+        }
+
+        function getMediaCapabilities() {
+            const capabilities = {};
+            
+            // Audio support
+            const audio = document.createElement('audio');
+            capabilities.mp3 = audio.canPlayType('audio/mpeg') !== '';
+            capabilities.wav = audio.canPlayType('audio/wav') !== '';
+            capabilities.ogg = audio.canPlayType('audio/ogg') !== '';
+            capabilities.m4a = audio.canPlayType('audio/m4a') !== '';
+            
+            // Video support
+            const video = document.createElement('video');
+            capabilities.mp4 = video.canPlayType('video/mp4') !== '';
+            capabilities.webm = video.canPlayType('video/webm') !== '';
+            capabilities.h264 = video.canPlayType('video/mp4; codecs="avc1.42E01E"') !== '';
+            capabilities.av1 = video.canPlayType('video/mp4; codecs="av01.0.01M.08"') !== '';
+            
+            return capabilities;
+        }
+
+        function getNetworkInfo() {
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            
+            return {
+                effectiveType: connection?.effectiveType || 'Unknown',
+                downlink: connection?.downlink || 'Unknown',
+                rtt: connection?.rtt || 'Unknown',
+                saveData: connection?.saveData || false,
+                type: connection?.type || 'Unknown'
+            };
+        }
+
+        function getSecurityInfo() {
+            return {
+                https: location.protocol === 'https:',
+                cookieEnabled: navigator.cookieEnabled,
+                doNotTrack: navigator.doNotTrack || 'Not set',
+                webrtc: !!(window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection),
+                permissions: 'permissions' in navigator,
+                serviceWorker: 'serviceWorker' in navigator,
+                pushManager: 'PushManager' in window,
+                notifications: 'Notification' in window
+            };
+        }
+
+        function getPerformanceInfo() {
+            const memory = performance.memory || {};
+            const timing = performance.timing || {};
+            
+            return {
+                jsHeapSizeLimit: memory.jsHeapSizeLimit ? `${Math.round(memory.jsHeapSizeLimit / 1048576)} MB` : 'Unknown',
+                totalJSHeapSize: memory.totalJSHeapSize ? `${Math.round(memory.totalJSHeapSize / 1048576)} MB` : 'Unknown',
+                usedJSHeapSize: memory.usedJSHeapSize ? `${Math.round(memory.usedJSHeapSize / 1048576)} MB` : 'Unknown',
+                loadTime: timing.loadEventEnd && timing.navigationStart ? `${timing.loadEventEnd - timing.navigationStart} ms` : 'Unknown',
+                domReady: timing.domContentLoadedEventEnd && timing.navigationStart ? `${timing.domContentLoadedEventEnd - timing.navigationStart} ms` : 'Unknown'
+            };
+        }
+
+        function populateInfo() {
+            // Hide the reset button when viewing user's own data
+            document.getElementById('reset-to-my-data-btn').style.display = 'none';
+            
+            const { browserName, browserVersion, engineName } = getBrowserInfo();
+            const { os, osVersion, architecture } = getOperatingSystem();
+            const networkInfo = getNetworkInfo();
+            const securityInfo = getSecurityInfo();
+            const performanceInfo = getPerformanceInfo();
+            const mediaCapabilities = getMediaCapabilities();
+
+            // Update timestamp
+            document.getElementById('timestamp-display').textContent = 
+                `🔍 Your browser data - Generated on ${new Date().toLocaleString()}`;
+
+            // Browser Details - Essential information
+            const browserInfo = document.getElementById('browser-info');
+            browserInfo.innerHTML = '';
+            
+            // Core browser info
+            browserInfo.appendChild(createInfoRow('Browser', `${browserName} (${variant})`));
+            browserInfo.appendChild(createInfoRow('Version', browserVersion));
+            browserInfo.appendChild(createInfoRow('Engine', `${engineName} ${engineVersion}`));
+            browserInfo.appendChild(createInfoRow('Language', navigator.language));
+            browserInfo.appendChild(createInfoRow('Cookies Enabled', browserDetails.cookiesEnabled));
+            browserInfo.appendChild(createInfoRow('Do Not Track', browserDetails.doNotTrack));
+            if (browserDetails.webDriver) {
+                browserInfo.appendChild(createInfoRow('WebDriver Active', browserDetails.webDriver));
+            }
+
+            // System Information - Key details
+            const systemInfo = document.getElementById('system-info');
+            systemInfo.innerHTML = '';
+            systemInfo.appendChild(createInfoRow('Operating System', `${os} ${osVersion}`));
+            systemInfo.appendChild(createInfoRow('Architecture', architecture));
+            systemInfo.appendChild(createInfoRow('CPU Cores', browserDetails.hardwareConcurrency));
+            systemInfo.appendChild(createInfoRow('Device Memory', browserDetails.deviceMemory !== 'Unknown' ? `${browserDetails.deviceMemory} GB` : 'Unknown'));
+            systemInfo.appendChild(createInfoRow('Max Touch Points', navigator.maxTouchPoints || 0));
+            
+            // Connection information (if available)
+            if (browserDetails.connection && browserDetails.connection.effectiveType) {
+                systemInfo.appendChild(createInfoRow('Connection Type', browserDetails.connection.effectiveType));
+            }
+
+            // Display & Device
+            const displayInfo = document.getElementById('display-info');
+            displayInfo.innerHTML = '';
+            displayInfo.appendChild(createInfoRow('Screen Resolution', `${screen.width} × ${screen.height}`));
+            displayInfo.appendChild(createInfoRow('Available Screen', `${screen.availWidth} × ${screen.availHeight}`));
+            displayInfo.appendChild(createInfoRow('Color Depth', `${screen.colorDepth} bits`));
+            displayInfo.appendChild(createInfoRow('Pixel Ratio', window.devicePixelRatio));
+            displayInfo.appendChild(createInfoRow('Touch Support', 'ontouchstart' in window));
+            displayInfo.appendChild(createInfoRow('Orientation', screen.orientation?.type || 'Unknown'));
+            displayInfo.appendChild(createInfoRow('Viewport', `${window.innerWidth} × ${window.innerHeight}`));
+
+            // Network Information
+            const networkInfoEl = document.getElementById('network-info');
+            networkInfoEl.innerHTML = '';
+            networkInfoEl.appendChild(createInfoRow('Online Status', navigator.onLine));
+            networkInfoEl.appendChild(createInfoRow('Connection Type', networkInfo.effectiveType));
+            networkInfoEl.appendChild(createInfoRow('Downlink', networkInfo.downlink !== 'Unknown' ? `${networkInfo.downlink} Mbps` : 'Unknown'));
+            networkInfoEl.appendChild(createInfoRow('RTT', networkInfo.rtt !== 'Unknown' ? `${networkInfo.rtt} ms` : 'Unknown'));
+            networkInfoEl.appendChild(createInfoRow('Save Data', networkInfo.saveData));
+            networkInfoEl.appendChild(createInfoRow('Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone));
+            networkInfoEl.appendChild(createInfoRow('Timezone Offset', `${new Date().getTimezoneOffset()} minutes`));
+
+            // Technical Features - Expanded capabilities
+            const technicalInfo = document.getElementById('technical-info');
+            technicalInfo.innerHTML = '';
+            
+            // Storage technologies
+            technicalInfo.appendChild(createInfoRow('Local Storage', browserDetails.localStorage));
+            technicalInfo.appendChild(createInfoRow('Session Storage', browserDetails.sessionStorage));
+            technicalInfo.appendChild(createInfoRow('IndexedDB', browserDetails.indexedDB));
+            technicalInfo.appendChild(createInfoRow('Web Crypto API', browserDetails.webCrypto));
+            
+            // Graphics and rendering
+            technicalInfo.appendChild(createInfoRow('WebGL', browserDetails.webGL));
+            technicalInfo.appendChild(createInfoRow('WebGL2', browserDetails.webGL2));
+            
+            // Web APIs and features
+            technicalInfo.appendChild(createInfoRow('Web Workers', browserDetails.webWorkers));
+            technicalInfo.appendChild(createInfoRow('Service Workers', browserDetails.serviceWorker));
+            technicalInfo.appendChild(createInfoRow('WebAssembly', browserDetails.webAssembly));
+            technicalInfo.appendChild(createInfoRow('SharedArrayBuffer', browserDetails.sharedArrayBuffer));
+            technicalInfo.appendChild(createInfoRow('Fetch API', browserDetails.fetch));
+            technicalInfo.appendChild(createInfoRow('Promises', browserDetails.promises));
+            technicalInfo.appendChild(createInfoRow('ES6 Modules', browserDetails.modules));
+            
+            // Observer APIs
+            technicalInfo.appendChild(createInfoRow('Intersection Observer', browserDetails.intersectionObserver));
+            technicalInfo.appendChild(createInfoRow('Mutation Observer', browserDetails.mutationObserver));
+            
+            // Media and communication
+            technicalInfo.appendChild(createInfoRow('WebRTC', browserDetails.webRTC));
+            technicalInfo.appendChild(createInfoRow('Web Audio API', browserDetails.webAudio));
+            technicalInfo.appendChild(createInfoRow('Media Devices', browserDetails.mediaDevices));
+            technicalInfo.appendChild(createInfoRow('getUserMedia', browserDetails.getUserMedia));
+            
+            // Navigation and security
+            technicalInfo.appendChild(createInfoRow('Geolocation', 'geolocation' in navigator));
+            technicalInfo.appendChild(createInfoRow('Permissions API', browserDetails.permissions));
+            technicalInfo.appendChild(createInfoRow('Credentials API', browserDetails.credentials));
+            technicalInfo.appendChild(createInfoRow('Send Beacon', browserDetails.sendBeacon));
+
+            // Security & Privacy
+            const securityInfoEl = document.getElementById('security-info');
+            securityInfoEl.innerHTML = '';
+            securityInfoEl.appendChild(createInfoRow('HTTPS', securityInfo.https));
+            securityInfoEl.appendChild(createInfoRow('Cookies Enabled', securityInfo.cookieEnabled));
+            securityInfoEl.appendChild(createInfoRow('Do Not Track', securityInfo.doNotTrack));
+            securityInfoEl.appendChild(createInfoRow('WebRTC', securityInfo.webrtc));
+            securityInfoEl.appendChild(createInfoRow('Permissions API', securityInfo.permissions));
+            securityInfoEl.appendChild(createInfoRow('Service Worker', securityInfo.serviceWorker));
+            securityInfoEl.appendChild(createInfoRow('Push Manager', securityInfo.pushManager));
+            securityInfoEl.appendChild(createInfoRow('Notifications', securityInfo.notifications));
+
+            // Performance & Memory
+            const performanceInfoEl = document.getElementById('performance-info');
+            performanceInfoEl.innerHTML = '';
+            performanceInfoEl.appendChild(createInfoRow('JS Heap Limit', performanceInfo.jsHeapSizeLimit));
+            performanceInfoEl.appendChild(createInfoRow('Total JS Heap', performanceInfo.totalJSHeapSize));
+            performanceInfoEl.appendChild(createInfoRow('Used JS Heap', performanceInfo.usedJSHeapSize));
+            performanceInfoEl.appendChild(createInfoRow('Page Load Time', performanceInfo.loadTime));
+            performanceInfoEl.appendChild(createInfoRow('DOM Ready Time', performanceInfo.domReady));
+            performanceInfoEl.appendChild(createInfoRow('Navigation Type', performance.navigation?.type || 'Unknown'));
+
+            // Media & Audio - Comprehensive media capabilities
+            const mediaInfo = document.getElementById('media-info');
+            mediaInfo.innerHTML = '';
+            
+            // Audio format support
+            mediaInfo.appendChild(createInfoRow('MP3 Support', mediaCapabilities.mp3));
+            mediaInfo.appendChild(createInfoRow('WAV Support', mediaCapabilities.wav));
+            mediaInfo.appendChild(createInfoRow('OGG Support', mediaCapabilities.ogg));
+            mediaInfo.appendChild(createInfoRow('M4A Support', mediaCapabilities.m4a));
+            
+            // Video format support
+            mediaInfo.appendChild(createInfoRow('MP4 Support', mediaCapabilities.mp4));
+            mediaInfo.appendChild(createInfoRow('WebM Support', mediaCapabilities.webm));
+            mediaInfo.appendChild(createInfoRow('H.264 Support', mediaCapabilities.h264));
+            mediaInfo.appendChild(createInfoRow('AV1 Support', mediaCapabilities.av1));
+            
+            // Advanced media APIs
+            mediaInfo.appendChild(createInfoRow('Web Audio API', browserDetails.webAudio));
+            mediaInfo.appendChild(createInfoRow('Media Devices API', browserDetails.mediaDevices));
+            mediaInfo.appendChild(createInfoRow('getUserMedia API', browserDetails.getUserMedia));
+            mediaInfo.appendChild(createInfoRow('WebRTC Support', browserDetails.webRTC));
+            
+            // Media stream capabilities
+            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                navigator.mediaDevices.enumerateDevices().then(devices => {
+                    const audioInputs = devices.filter(device => device.kind === 'audioinput').length;
+                    const videoInputs = devices.filter(device => device.kind === 'videoinput').length;
+                    const audioOutputs = devices.filter(device => device.kind === 'audiooutput').length;
+                    
+                    if (audioInputs > 0) mediaInfo.appendChild(createInfoRow('Audio Inputs', audioInputs));
+                    if (videoInputs > 0) mediaInfo.appendChild(createInfoRow('Video Inputs', videoInputs));
+                    if (audioOutputs > 0) mediaInfo.appendChild(createInfoRow('Audio Outputs', audioOutputs));
+                }).catch(() => {
+                    mediaInfo.appendChild(createInfoRow('Media Devices', 'Permission required'));
+                });
+            } else {
+                mediaInfo.appendChild(createInfoRow('Media Device Detection', 'Not supported'));
+            }
+
+            // Session Information
+            const sessionInfo = document.getElementById('session-info');
+            sessionInfo.innerHTML = '';
+            const now = new Date();
+            sessionInfo.appendChild(createInfoRow('Data Collected', now.toLocaleString()));
+            sessionInfo.appendChild(createInfoRow('Page URL', window.location.href, true));
+            sessionInfo.appendChild(createInfoRow('Referrer', document.referrer || 'Direct'));
+            sessionInfo.appendChild(createInfoRow('User Agent', navigator.userAgent, true));
+            sessionInfo.appendChild(createInfoRow('Viewport Size', `${window.innerWidth} × ${window.innerHeight}`));
+            sessionInfo.appendChild(createInfoRow('Document Title', document.title));
+            sessionInfo.appendChild(createInfoRow('Character Set', document.characterSet));
+        }
+
+        function shareInfo() {
+            const info = {
+                browser: getBrowserInfo(),
+                os: getOperatingSystem(),
+                screen: `${screen.width}x${screen.height}`,
+                language: navigator.language,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                timestamp: new Date().toISOString()
+            };
+
+            const encodedInfo = encodeURIComponent(JSON.stringify(info));
+            const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encodedInfo}`;
+            
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                showToast('Shareable link copied to clipboard!', 'success');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy link', 'error');
+            });
+        }
+
+        function downloadAsImage() {
+            const container = document.getElementById('info-container');
+            const downloadBtn = document.querySelector('button[onclick="downloadAsImage()"]');
+            
+            // Show loading state
+            downloadBtn.innerHTML = '<svg class="animate-spin w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" class="opacity-75"></path></svg>Generating...';
+            downloadBtn.disabled = true;
+            
+            html2canvas(container, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: true,
+                allowTaint: false,
+                height: container.scrollHeight,
+                width: container.scrollWidth
+            }).then(canvas => {
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `browser-info-${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // Reset button
+                downloadBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Download Image';
+                downloadBtn.disabled = false;
+                
+                showToast('Image downloaded successfully!', 'success');
+            }).catch(err => {
+                console.error('Error generating image:', err);
+                downloadBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Download Image';
+                downloadBtn.disabled = false;
+                showToast('Failed to generate image', 'error');
+            });
+        }
+
+        function copyImageToClipboard() {
+            const container = document.getElementById('info-container');
+            const copyBtn = document.querySelector('button[onclick="copyImageToClipboard()"]');
+            
+            // Show loading state
+            copyBtn.innerHTML = '<svg class="animate-spin w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" class="opacity-75"></path></svg>Copying...';
+            copyBtn.disabled = true;
+            
+            html2canvas(container, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: true,
+                allowTaint: false,
+                height: container.scrollHeight,
+                width: container.scrollWidth
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    if (navigator.clipboard && window.ClipboardItem) {
+                        const item = new ClipboardItem({ 'image/png': blob });
+                        navigator.clipboard.write([item]).then(() => {
+                            showToast('Image copied to clipboard!', 'success');
+                        }).catch(err => {
+                            console.error('Failed to copy image to clipboard:', err);
+                            showToast('Failed to copy image to clipboard', 'error');
+                        });
+                    } else {
+                        showToast('Clipboard API not supported', 'error');
+                    }
+                }, 'image/png');
+                
+                // Reset button
+                copyBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copy Image';
+                copyBtn.disabled = false;
+            }).catch(err => {
+                console.error('Error generating image:', err);
+                copyBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copy Image';
+                copyBtn.disabled = false;
+                showToast('Failed to generate image', 'error');
+            });
+        }
+
+        // Reset to user's own browser data
+        function resetToMyData() {
+            // Remove the data parameter from URL and reload
+            const url = new URL(window.location);
+            url.searchParams.delete('data');
+            window.history.replaceState({}, document.title, url.pathname);
+            
+            // Hide the reset button and load user's own data
+            document.getElementById('reset-to-my-data-btn').style.display = 'none';
+            populateInfo();
+            showToast('Switched to your browser data!', 'success');
+        }
+
+        // Populate info from shared data
+        function populateSharedInfo(data) {
+            // Show the reset button when viewing shared data
+            document.getElementById('reset-to-my-data-btn').style.display = 'flex';
+            
+            // Update timestamp and add indicator for shared data
+            document.getElementById('timestamp-display').textContent = 
+                `📤 Viewing shared data from ${new Date(data.timestamp).toLocaleString()}`;
+
+            // Browser Details
+            const browserInfo = document.getElementById('browser-info');
+            browserInfo.innerHTML = '';
+            browserInfo.appendChild(createInfoRow('Browser', data.browser.browserName));
+            browserInfo.appendChild(createInfoRow('Version', data.browser.browserVersion));
+            browserInfo.appendChild(createInfoRow('Engine', data.browser.engineName));
+            browserInfo.appendChild(createInfoRow('Major Version', data.browser.browserVersion.split('.')[0]));
+            browserInfo.appendChild(createInfoRow('Language', data.language));
+            browserInfo.appendChild(createInfoRow('Timezone', data.timezone));
+            browserInfo.appendChild(createInfoRow('Data Source', 'Shared Link'));
+
+            // System Information
+            const systemInfo = document.getElementById('system-info');
+            systemInfo.innerHTML = '';
+            systemInfo.appendChild(createInfoRow('Operating System', data.os.os));
+            systemInfo.appendChild(createInfoRow('OS Version', data.os.osVersion));
+            systemInfo.appendChild(createInfoRow('Architecture', data.os.architecture));
+            systemInfo.appendChild(createInfoRow('Screen Resolution', data.screen));
+            systemInfo.appendChild(createInfoRow('Shared At', new Date(data.timestamp).toLocaleString()));
+
+            // Display & Device - Limited info for shared data
+            const displayInfo = document.getElementById('display-info');
+            displayInfo.innerHTML = '';
+            displayInfo.appendChild(createInfoRow('Screen Resolution', data.screen));
+            displayInfo.appendChild(createInfoRow('Data Type', 'Shared Information'));
+            displayInfo.appendChild(createInfoRow('Status', 'External Data'));
+
+            // Clear other sections for shared data
+            const sectionsToHide = ['network-info', 'technical-info', 'security-info', 'performance-info', 'media-info', 'session-info'];
+            sectionsToHide.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                section.innerHTML = '';
+                section.appendChild(createInfoRow('Notice', 'Data not available in shared mode'));
+                section.appendChild(createInfoRow('Reason', 'Privacy and security protection'));
+            });
+        }
+
+        // Check if there's shared data in URL
+        function checkSharedData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedData = urlParams.get('data');
+            
+            if (sharedData) {
+                try {
+                    const data = JSON.parse(decodeURIComponent(sharedData));
+                    populateSharedInfo(data);
+                    showToast('Loaded shared browser data!', 'success');
+                    return true;
+                } catch (e) {
+                    console.error('Error parsing shared data:', e);
+                    showToast('Failed to load shared data', 'error');
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for shared data first, if not found then load current browser data
+            if (!checkSharedData()) {
+                populateInfo();
+            }
+            
+            // Auto-refresh every 30 seconds for dynamic data
+            setInterval(() => {
+                // Only refresh network and performance data
+                const networkInfo = getNetworkInfo();
+                const performanceInfo = getPerformanceInfo();
+                
+                // Update network status
+                const onlineStatus = document.querySelector('#network-info .flex:first-child .text-sm:last-child');
+                if (onlineStatus) {
+                    onlineStatus.textContent = navigator.onLine ? 'Yes' : 'No';
+                    onlineStatus.className = navigator.onLine ? 'text-sm font-semibold text-green-600' : 'text-sm font-semibold text-red-600';
+                }
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
