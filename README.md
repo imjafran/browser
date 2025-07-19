@@ -221,7 +221,7 @@ liquid/
 
 ## 📝 Changelog
 
-### Version 2.0 (Current)
+### Version 1.0 (Current)
 - ✅ Added comprehensive data sharing
 - ✅ Enhanced IP geolocation with multiple APIs
 - ✅ Real-time current time display
@@ -230,8 +230,6 @@ liquid/
 - ✅ CSV export functionality
 - ✅ Image download and clipboard copy
 - ✅ Mobile-responsive design improvements
-
-### Version 1.0
 - Initial release with basic browser detection
 - Simple data display
 - Basic sharing functionality
