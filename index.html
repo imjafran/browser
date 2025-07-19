@@ -45,12 +45,24 @@
             backdrop-filter: blur(24px) saturate(1.8);
             -webkit-backdrop-filter: blur(24px) saturate(1.8);
             border-radius: 6px;
-            padding: 32px;
-            margin: 20px;
+            padding: 16px;
+            margin: 8px;
             border: 0.5px solid rgba(255, 255, 255, 0.9);
             box-shadow: 
                 0 8px 40px rgba(0, 0, 0, 0.08),
                 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        @media (min-width: 640px) {
+            .info-container {
+                padding: 24px;
+                margin: 16px;
+            }
+        }
+        @media (min-width: 768px) {
+            .info-container {
+                padding: 32px;
+                margin: 20px;
+            }
         }
         .info-section {
             /* max-height: 460px;  */
@@ -265,8 +277,14 @@
         }
             .masonry-container {
             column-count: 1;
-            column-gap: 1.5rem;
+            column-gap: 1rem;
             column-fill: balance;
+            padding: 0;
+        }
+        @media (min-width: 640px) {
+            .masonry-container {
+                column-gap: 1.5rem;
+            }
         }
         @media (min-width: 768px) {
             .masonry-container {
@@ -286,7 +304,7 @@
         .info-card {
             break-inside: avoid;
             page-break-inside: avoid;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             width: 100%;
             display: inline-block;
             background: rgba(255, 255, 255, 0.7);
@@ -298,25 +316,123 @@
                 0 4px 20px rgba(0, 0, 0, 0.06),
                 0 1px 4px rgba(0, 0, 0, 0.04);
         }
+        @media (min-width: 640px) {
+            .info-card {
+                margin-bottom: 1.5rem;
+            }
+        }
+        
+        /* Mobile-friendly card sections */
+        .info-card .section-header {
+            padding: 16px 16px 12px 16px;
+        }
+        .info-card .section-content {
+            padding: 0 16px 16px 16px;
+        }
+        @media (min-width: 640px) {
+            .info-card .section-header {
+                padding: 24px 24px 16px 24px;
+            }
+            .info-card .section-content {
+                padding: 0 24px 24px 24px;
+            }
+        }
+        
+        /* Ensure glass buttons are touch-friendly on mobile */
+        .glass-btn {
+            min-height: 44px;
+            padding: 12px 16px;
+            font-size: 14px;
+        }
+        @media (min-width: 640px) {
+            .glass-btn {
+                padding: 12px 24px;
+                font-size: 15px;
+            }
+        }
+        
+        /* Toast container responsive width */
+        .toast-container {
+            width: calc(100vw - 32px);
+            max-width: 400px;
+        }
+        @media (min-width: 640px) {
+            .toast-container {
+                width: auto;
+                max-width: none;
+            }
+        }
+        
+        /* Toggle all sections button animations */
+        #toggle-sections-btn {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        #toggle-sections-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        #toggle-sections-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        #toggle-sections-icon {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        #toggle-sections-btn.all-expanded #toggle-sections-icon {
+            transform: rotate(180deg);
+        }
+        
+        #toggle-sections-btn.all-collapsed #toggle-sections-icon {
+            transform: rotate(0deg);
+        }
+        
+        /* Pulse animation when toggling */
+        #toggle-sections-btn.toggling {
+            animation: togglePulse 0.6s ease-out;
+        }
+        
+        @keyframes togglePulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+            50% {
+                transform: scale(1.15);
+                box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
       </style>
 </head>
 <body>
-    <div class="max-w-7xl mx-auto sm:px-4 py-8">
+    <div class="max-w-7xl mx-auto sm:px-4 lg:px-6 py-4 sm:py-8">
         <!-- Header -->
-        <div class="text-center mb-12">
-            <div class="flex items-center justify-center mb-6 gap-3 sm:px-4">
+        <div class="text-center mb-6 sm:mb-12">
+            <div class="flex items-center justify-center mb-4 sm:mb-6 gap-3 px-2 sm:px-4">
                 <div class="w-16 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded flex items-center justify-center mr-4 shadow-lg">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                     </svg>
                 </div>
                 <div>
-                    <h1 class="text-3xl sm:text-5xl font-bold hero-title mb-2">Browser Detective</h1>
+                    <h1 class="text-2xl sm:text-3xl lg:text-5xl font-bold hero-title mb-2">Browser Detective</h1>
                 </div>
             </div>
             
             <!-- Action Buttons -->
-            <div class="flex flex-wrap justify-center gap-4">
+            <div class="flex flex-wrap justify-center gap-2 sm:gap-4 px-2">
                 <!-- Reset button for shared data - only visible when viewing shared data -->
                 <button id="reset-to-my-data-btn" onclick="resetToMyData()" 
                         class="glass-btn danger" style="display: none;">
@@ -372,17 +488,18 @@
         </div>
 
         <!-- Info Container for Image Download -->
-        <div id="info-container" class="info-container relative">
+        <div id="info-container" class="info-container relative m-0 sm:m-4 bg-white/60 shadow-none sm:shadow-lg">
             <!-- Toggle All Sections Button -->
             <button id="toggle-sections-btn" onclick="toggleAllSections()" 
-                    class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/70 backdrop-blur-xl border border-white/30 rounded-lg flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-white/80 transition-all duration-200 shadow-lg">
+                    title="Toggle All Sections"
+                    class="absolute top-4 right-4 z-10 w-10 h-10 rounded-lg flex items-center justify-center text-gray-600 hover:text-gray-800">
                 <svg id="toggle-sections-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
             </button>
             
             <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-800 mb-2">Browser Information Report</h2>
+                <h2 class="text-xl sm:text-3xl font-bold text-gray-800 mb-2">Browser Information Report</h2>
                 <p class="text-gray-600" id="timestamp-display"></p>
             </div>
 
@@ -390,7 +507,7 @@
             <div class="masonry-container">
                 <!-- Browser Details -->
                 <div class="info-card transition-all duration-300">
-                    <div class="section-header flex items-center justify-between p-6 pb-4" onclick="toggleSection('browser-details')">
+                    <div class="section-header flex items-center justify-between" onclick="toggleSection('browser-details')">
                         <div class="flex items-center">
                             <div class="w-12 h-12 bg-blue-100 rounded-sm flex items-center justify-center text-blue-600 text-xl font-bold mr-3">
                                 🌐
@@ -401,7 +518,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
-                    <div id="browser-details" class="section-content expanded px-6 pb-6">
+                    <div id="browser-details" class="section-content expanded">
                         <div id="browser-info" class="space-y-3 info-section">
                             <!-- Browser info will be populated here -->
                         </div>
@@ -410,7 +527,7 @@
 
                 <!-- System Information -->
                 <div class="info-card transition-all duration-300">
-                    <div class="section-header flex items-center justify-between p-6 pb-4" onclick="toggleSection('system-details')">
+                    <div class="section-header flex items-center justify-between" onclick="toggleSection('system-details')">
                         <div class="flex items-center">
                             <div class="w-12 h-12 bg-gray-100 rounded-sm flex items-center justify-center text-gray-600 text-xl font-bold mr-3">
                                 💻
@@ -421,7 +538,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
-                    <div id="system-details" class="section-content expanded px-6 pb-6">
+                    <div id="system-details" class="section-content expanded">
                         <div id="system-info" class="space-y-3 info-section">
                             <!-- System info will be populated here -->
                         </div>
@@ -430,7 +547,7 @@
 
                 <!-- Display & Device -->
                 <div class="info-card transition-all duration-300">
-                    <div class="section-header flex items-center justify-between p-6 pb-4" onclick="toggleSection('display-details')">
+                    <div class="section-header flex items-center justify-between" onclick="toggleSection('display-details')">
                         <div class="flex items-center">
                             <div class="w-12 h-12 bg-blue-100 rounded-sm flex items-center justify-center text-blue-600 text-xl font-bold mr-3">
                                 🖥️
@@ -441,7 +558,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
-                    <div id="display-details" class="section-content expanded px-6 pb-6">
+                    <div id="display-details" class="section-content expanded">
                         <div id="display-info" class="space-y-3 info-section">
                             <!-- Display info will be populated here -->
                         </div>
@@ -571,7 +688,7 @@
         </div>
 
         <!-- Footer -->
-        <div class="text-center mt-12 text-gray-500">
+        <div class="text-center mt-8 sm:mt-12 text-gray-500 px-2">
             <div class="max-w-3xl mx-auto space-y-3">
                 <p class="text-sm">🔒 <strong>Privacy First:</strong> All data is generated locally in your browser. No information is stored anywhere on servers. Data sharing works through URL encoding - your information travels directly via the share link.</p>
                 <p class="text-sm">
@@ -581,7 +698,7 @@
                         Let us know here
                     </a>
                 </p>
-                <div class="flex items-center justify-center gap-6 pt-4 border-t border-gray-200">
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 pt-4 border-t border-gray-200">
                     <div class="flex items-center gap-2">
                         <span class="text-sm">Made with ❤️ by</span>
                         <a href="https://fb.com/iamjafran" target="_blank" rel="noopener noreferrer" 
@@ -657,17 +774,17 @@
             // Create toast container if it doesn't exist
             if (!toastContainer) {
                 toastContainer = document.createElement('div');
-                toastContainer.className = 'fixed top-6 right-6 z-50 flex flex-col gap-3 pointer-events-none';
+                toastContainer.className = 'toast-container fixed bottom-6 left-1/2 transform -translate-x-1/2 sm:top-6 sm:right-6 sm:left-auto sm:bottom-auto sm:transform-none z-50 flex flex-col gap-3 pointer-events-none';
                 document.body.appendChild(toastContainer);
             }
             
             const toast = document.createElement('div');
-            toast.className = 'transform translate-x-full opacity-0 transition-all duration-300 ease-out pointer-events-auto';
+            toast.className = 'transform translate-y-full sm:translate-y-0 sm:translate-x-full opacity-0 transition-all duration-300 ease-out pointer-events-auto';
             
             // Glass morphism container
             const container = document.createElement('div');
             container.className = `
-                flex items-start gap-3 p-4 min-w-80 max-w-md
+                flex items-start gap-3 p-4 w-full sm:min-w-80 sm:max-w-md
                 bg-white/90 backdrop-blur-xl saturate-150
                 border border-white/20 rounded-xl shadow-2xl
                 ${type === 'success' 
@@ -739,8 +856,8 @@
             
             // Animate in
             requestAnimationFrame(() => {
-                toast.classList.remove('translate-x-full', 'opacity-0');
-                toast.classList.add('translate-x-0', 'opacity-100');
+                toast.classList.remove('translate-y-full', 'sm:translate-y-0', 'sm:translate-x-full', 'opacity-0');
+                toast.classList.add('translate-y-0', 'translate-x-0', 'opacity-100');
             });
             
             // Auto remove after 4 seconds
@@ -751,7 +868,7 @@
             // Remove function
             function removeToast() {
                 clearTimeout(autoRemove);
-                toast.classList.add('translate-x-full', 'opacity-0');
+                toast.classList.add('translate-y-full', 'sm:translate-y-0', 'sm:translate-x-full', 'opacity-0');
                 setTimeout(() => {
                     if (toast.parentNode) {
                         toast.remove();
@@ -2491,12 +2608,39 @@
                 section.classList.add('collapsed');
                 chevron.classList.remove('rotated');
             }
+            
+            // Update toggle-all button state based on current sections
+            updateToggleAllButtonState();
+        }
+        
+        function updateToggleAllButtonState() {
+            const sections = document.querySelectorAll('.section-content');
+            const toggleBtn = document.getElementById('toggle-sections-btn');
+            const toggleIcon = document.getElementById('toggle-sections-icon');
+            const hasCollapsed = Array.from(sections).some(section => section.classList.contains('collapsed'));
+            
+            if (hasCollapsed) {
+                toggleBtn.classList.remove('all-expanded');
+                toggleBtn.classList.add('all-collapsed');
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>';
+            } else {
+                toggleBtn.classList.remove('all-collapsed');
+                toggleBtn.classList.add('all-expanded');
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>';
+            }
         }
 
         function toggleAllSections() {
             const sections = document.querySelectorAll('.section-content');
             const chevrons = document.querySelectorAll('.chevron-icon');
+            const toggleBtn = document.getElementById('toggle-sections-btn');
             const toggleIcon = document.getElementById('toggle-sections-icon');
+            
+            // Add toggling animation
+            toggleBtn.classList.add('toggling');
+            setTimeout(() => {
+                toggleBtn.classList.remove('toggling');
+            }, 600);
             
             // Check if any sections are collapsed
             const hasCollapsed = Array.from(sections).some(section => section.classList.contains('collapsed'));
@@ -2510,6 +2654,10 @@
                 chevrons.forEach(chevron => {
                     chevron.classList.add('rotated');
                 });
+                
+                // Update button state
+                toggleBtn.classList.remove('all-collapsed');
+                toggleBtn.classList.add('all-expanded');
                 toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>';
             } else {
                 // Collapse all sections
@@ -2520,6 +2668,10 @@
                 chevrons.forEach(chevron => {
                     chevron.classList.remove('rotated');
                 });
+                
+                // Update button state
+                toggleBtn.classList.remove('all-expanded');
+                toggleBtn.classList.add('all-collapsed');
                 toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>';
             }
         }
@@ -2620,10 +2772,16 @@
                 }
             });
             
-            // Initialize toggle button icon based on current state
+            // Initialize toggle button icon and state based on current state
             const hasCollapsed = Array.from(document.querySelectorAll('.section-content')).some(section => section.classList.contains('collapsed'));
+            const toggleBtn = document.getElementById('toggle-sections-btn');
             const toggleIcon = document.getElementById('toggle-sections-icon');
-            if (!hasCollapsed) {
+            
+            if (hasCollapsed) {
+                toggleBtn.classList.add('all-collapsed');
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>';
+            } else {
+                toggleBtn.classList.add('all-expanded');
                 toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>';
             }
             
