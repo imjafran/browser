@@ -1,318 +1,327 @@
-===============================================================================
-                            BROWSER DETECTIVE
-         Comprehensive System & Browser Fingerprinting Tool
-===============================================================================
+# 🕵️‍♂️ Browser Detective
 
-🌐 Live Demo: https://browser.jafran.online
-👨‍💻 Developer: Jafran Hasan (https://fb.com/iamjafran)
-📧 Feedback: https://forms.gle/u4QjCHiyN8gJzPBD8
+**Comprehensive System & Browser Fingerprinting Tool**
 
-===============================================================================
-DESCRIPTION
-===============================================================================
+[![Live Demo](https://img.shields.io/badge/Live-Demo-blue)](https://browser.jafran.online)
+[![Developer](https://img.shields.io/badge/Developer-Jafran%20Hasan-green)](https://fb.com/iamjafran)
+[![Feedback](https://img.shields.io/badge/Feedback-Form-orange)](https://forms.gle/u4QjCHiyN8gJzPBD8)
 
-Browser Detective is a comprehensive web-based tool that provides detailed 
-insights about your browser, device, system, and network information. It 
-creates a complete "fingerprint" of your browsing environment for security 
-analysis, debugging, or educational purposes.
+---
 
-All data is processed locally in your browser with complete privacy protection.
-No information is stored on servers - data sharing works through URL encoding.
+## 📋 Description
 
-===============================================================================
-KEY FEATURES
-===============================================================================
+Browser Detective is a comprehensive web-based tool that provides detailed insights about your browser, device, system, and network information. It creates a complete "fingerprint" of your browsing environment for security analysis, debugging, or educational purposes.
 
-🌐 BROWSER DETAILS
-   • Browser name, version, variant, and engine information
-   • Language preferences and capabilities
-   • Java, cookies, PDF viewer support
-   • Real-time current time display
-   • WebDriver detection
+**🔒 Privacy First:** All data is processed locally in your browser with complete privacy protection. No information is stored on servers - data sharing works through URL encoding.
 
-💻 SYSTEM INFORMATION  
-   • Operating system and version detection
-   • Architecture (x86, x64, ARM)
-   • Hardware concurrency (CPU cores)
-   • Device memory information
-   • Touch capabilities
+---
 
-🖥️ DISPLAY & DEVICE
-   • Screen resolution and available space
-   • Color depth and pixel ratio
-   • Device orientation
-   • Viewport dimensions
-   • Touch support detection
+## ✨ Key Features
 
-🌍 LOCATION & NETWORK
-   • Public IP address and geolocation
-   • ISP and ASN information
-   • Connection type and speed
-   • Browser and IP timezone
-   • City, region, country details
+### 🌐 Browser Details
+- Browser name, version, variant, and engine information
+- Language preferences and capabilities  
+- Java, cookies, PDF viewer support
+- Real-time current time display
+- WebDriver detection
 
-⚙️ TECHNICAL FEATURES
-   • Storage APIs (localStorage, sessionStorage, IndexedDB)
-   • Modern web APIs (WebGL, WebRTC, WebAssembly)
-   • Worker support (Web Workers, Service Workers)
-   • Security APIs (Web Crypto, Permissions)
-   • Observer APIs and ES6 features
+### 💻 System Information
+- Operating system and version detection
+- Architecture (x86, x64, ARM)
+- Hardware concurrency (CPU cores)
+- Device memory information
+- Touch capabilities
 
-🔒 SECURITY & PRIVACY
-   • HTTPS detection
-   • Do Not Track status
-   • Permission API support
-   • WebDriver detection
-   • Security feature analysis
+### 🖥️ Display & Device
+- Screen resolution and available space
+- Color depth and pixel ratio
+- Device orientation
+- Viewport dimensions
+- Touch support detection
 
-📊 PERFORMANCE & MEMORY
-   • JavaScript heap memory usage
-   • Page load and DOM ready times
-   • Navigation type
-   • Performance metrics
+### 🌍 Location & Network
+- Public IP address and geolocation
+- ISP and ASN information
+- Connection type and speed
+- Browser and IP timezone
+- City, region, country details
 
-🎵 MEDIA & AUDIO
-   • Audio/video codec support
-   • Format compatibility (MP3, WAV, MP4, WebM, etc.)
-   • Advanced codec support (H.264, AV1)
-   • Web Audio API detection
+### ⚙️ Technical Features
+- Storage APIs (localStorage, sessionStorage, IndexedDB)
+- Modern web APIs (WebGL, WebRTC, WebAssembly)
+- Worker support (Web Workers, Service Workers)
+- Security APIs (Web Crypto, Permissions)
+- Observer APIs and ES6 features
 
-📋 SESSION INFORMATION
-   • Current session details
-   • Page URL and referrer
-   • Character set and document title
-   • User agent string
+### 🔒 Security & Privacy
+- HTTPS detection
+- Do Not Track status
+- Permission API support
+- WebDriver detection
+- Security feature analysis
 
-===============================================================================
-HOW TO USE
-===============================================================================
+### 📊 Performance & Memory
+- JavaScript heap memory usage
+- Page load and DOM ready times
+- Navigation type
+- Performance metrics
 
-BASIC USAGE:
+### 🎵 Media & Audio
+- Audio/video codec support
+- Format compatibility (MP3, WAV, MP4, WebM, etc.)
+- Advanced codec support (H.264, AV1)
+- Web Audio API detection
+
+### 📋 Session Information
+- Current session details
+- Page URL and referrer
+- Character set and document title
+- User agent string
+
+---
+
+## 🚀 How to Use
+
+### Basic Usage
 1. Open the tool in your web browser
 2. All information loads automatically
 3. Browse through different sections using the collapsible cards
 4. Use the floating toggle button to expand/collapse all sections
 
-SHARING DATA:
-1. Click "Share Link" button
+### Sharing Data
+1. Click **"Share Link"** button
 2. Complete browser data is collected (including IP info)
 3. Shareable URL is copied to clipboard
 4. Send the URL to share your browser fingerprint
 
-EXPORTING DATA:
-1. Click "Export" dropdown button
-2. Choose "Download Image" for PNG screenshot
-3. Choose "Export as CSV" for spreadsheet data
-4. Use "Copy Image" to copy screenshot to clipboard
+### Exporting Data
+1. Click **"Export"** dropdown button
+2. Choose **"Download Image"** for PNG screenshot
+3. Choose **"Export as CSV"** for spreadsheet data
+4. Use **"Copy Image"** to copy screenshot to clipboard
 
-FEEDBACK:
-• Use the feedback link in the footer to report issues or suggest improvements
+### Feedback
+- Use the feedback link in the footer to report issues or suggest improvements
 
-===============================================================================
-TECHNICAL DETAILS
-===============================================================================
+---
 
-TECHNOLOGY STACK:
-• HTML5, CSS3, JavaScript (Vanilla)
-• Tailwind CSS for styling
-• html2canvas for image generation
-• Multiple IP geolocation APIs for reliability
+## 🛠️ Technical Details
 
-BROWSER COMPATIBILITY:
-• Modern browsers (Chrome 60+, Firefox 55+, Safari 12+, Edge 79+)
-• Mobile browsers supported
-• Progressive enhancement for older browsers
+### Technology Stack
+- **Frontend:** HTML5, CSS3, JavaScript (Vanilla)
+- **Styling:** Tailwind CSS
+- **Image Generation:** html2canvas
+- **APIs:** Multiple IP geolocation services
 
-API ENDPOINTS:
-• Multiple IP detection services for reliability:
-  - api.ipify.org
-  - ipapi.co  
-  - ipinfo.io
-  - api.ip.sb
-  - api.my-ip.io
+### Browser Compatibility
+- **Modern browsers:** Chrome 60+, Firefox 55+, Safari 12+, Edge 79+
+- **Mobile browsers:** Fully supported
+- **Progressive enhancement** for older browsers
 
-DATA COLLECTION:
-• All data collected client-side using browser APIs
-• No server-side processing or storage
-• No cookies or tracking
-• No external dependencies for core functionality
+### API Endpoints
+Multiple IP detection services for reliability:
+- `api.ipify.org`
+- `ipapi.co`
+- `ipinfo.io` 
+- `api.ip.sb`
+- `api.my-ip.io`
 
-URL SHARING:
-• Data encoded in URL parameters
-• JSON compression and URL encoding
-• Supports URLs up to 8000+ characters
-• Backward compatibility with older share formats
+### Data Collection
+- ✅ All data collected client-side using browser APIs
+- ✅ No server-side processing or storage
+- ✅ No cookies or tracking
+- ✅ No external dependencies for core functionality
 
-===============================================================================
-PRIVACY & SECURITY
-===============================================================================
+### URL Sharing
+- Data encoded in URL parameters
+- JSON compression and URL encoding
+- Supports URLs up to 8000+ characters
+- Backward compatibility with older share formats
 
-PRIVACY FIRST APPROACH:
-✅ All data processed locally in your browser
-✅ No server-side storage or logging
-✅ No cookies or tracking scripts
-✅ No external analytics or monitoring
-✅ No user registration required
+---
 
-DATA SHARING:
-• Sharing works through URL encoding only
-• Your data travels directly via the share link
-• Recipients see only what you explicitly share
-• No intermediary servers involved
+## 🔐 Privacy & Security
 
-SECURITY FEATURES:
-• HTTPS enforced for secure connections
-• No sensitive data collection
-• No password or personal information requests
-• Open source and transparent
+### Privacy First Approach
+- ✅ All data processed locally in your browser
+- ✅ No server-side storage or logging
+- ✅ No cookies or tracking scripts
+- ✅ No external analytics or monitoring
+- ✅ No user registration required
 
-IP INFORMATION:
-• IP geolocation used for location services only
-• Multiple API providers for reliability
-• No IP logging or storage
-• Location data included only in shared links
+### Data Sharing
+- Sharing works through URL encoding only
+- Your data travels directly via the share link
+- Recipients see only what you explicitly share
+- No intermediary servers involved
 
-===============================================================================
-FILE STRUCTURE
-===============================================================================
+### Security Features
+- HTTPS enforced for secure connections
+- No sensitive data collection
+- No password or personal information requests
+- Open source and transparent
 
+---
+
+## 📁 File Structure
+
+```
 liquid/
 ├── index.html          # Main application file
-├── README.txt          # This file
-└── (Additional project files may be present)
+├── README.md          # This file
+└── README.txt         # Plain text version
+```
 
-MAIN COMPONENTS:
-• HTML structure with semantic sections
-• CSS styling with glass morphism design
-• JavaScript for data collection and UI
-• Responsive design for all devices
+### Main Components
+- HTML structure with semantic sections
+- CSS styling with glass morphism design
+- JavaScript for data collection and UI
+- Responsive design for all devices
 
-===============================================================================
-BROWSER SUPPORT
-===============================================================================
+---
 
-FULLY SUPPORTED:
-• Chrome 80+ (Windows, Mac, Linux, Android)
-• Firefox 75+ (Windows, Mac, Linux, Android)  
-• Safari 13+ (Mac, iOS)
-• Edge 80+ (Windows)
+## 🌐 Browser Support
 
-PARTIALLY SUPPORTED:
-• Older browsers may have limited feature detection
-• Some APIs may not be available in older versions
-• Graceful degradation ensures basic functionality
+### Fully Supported
+| Browser | Version | Platforms |
+|---------|---------|-----------|
+| Chrome | 80+ | Windows, Mac, Linux, Android |
+| Firefox | 75+ | Windows, Mac, Linux, Android |
+| Safari | 13+ | Mac, iOS |
+| Edge | 80+ | Windows |
 
-MOBILE SUPPORT:
-• Responsive design works on all screen sizes
-• Touch-optimized interface
-• Mobile-specific data collection
-• iOS and Android compatibility
+### Mobile Support
+- ✅ Responsive design works on all screen sizes
+- ✅ Touch-optimized interface  
+- ✅ Mobile-specific data collection
+- ✅ iOS and Android compatibility
 
-===============================================================================
-DEVELOPMENT
-===============================================================================
+---
 
-GETTING STARTED:
+## 💻 Development
+
+### Getting Started
 1. Clone or download the project files
-2. Open index.html in a web browser
+2. Open `index.html` in a web browser
 3. No build process or dependencies required
 4. Works locally or on any web server
 
-CUSTOMIZATION:
-• Modify CSS variables for theming
-• Add new data collection functions
-• Extend sharing formats
-• Add new export options
+### Customization
+- Modify CSS variables for theming
+- Add new data collection functions
+- Extend sharing formats
+- Add new export options
 
-CONTRIBUTING:
-• Report issues via the feedback form
-• Suggest improvements or new features
-• Contact developer for collaboration
+### Contributing
+- Report issues via the [feedback form](https://forms.gle/u4QjCHiyN8gJzPBD8)
+- Suggest improvements or new features
+- Contact developer for collaboration
 
-===============================================================================
-CHANGELOG
-===============================================================================
+---
 
-VERSION 2.0 (Current):
-• Added comprehensive data sharing
-• Enhanced IP geolocation with multiple APIs
-• Real-time current time display
-• Modern glass morphism UI design
-• Advanced error handling and debugging
-• CSV export functionality
-• Image download and clipboard copy
-• Mobile-responsive design improvements
+## 📝 Changelog
 
-VERSION 1.0:
-• Initial release with basic browser detection
-• Simple data display
-• Basic sharing functionality
+### Version 2.0 (Current)
+- ✅ Added comprehensive data sharing
+- ✅ Enhanced IP geolocation with multiple APIs
+- ✅ Real-time current time display
+- ✅ Modern glass morphism UI design
+- ✅ Advanced error handling and debugging
+- ✅ CSV export functionality
+- ✅ Image download and clipboard copy
+- ✅ Mobile-responsive design improvements
 
-===============================================================================
-LICENSE & CREDITS
-===============================================================================
+### Version 1.0
+- Initial release with basic browser detection
+- Simple data display
+- Basic sharing functionality
 
-DEVELOPER:
-Jafran Hasan
-• Facebook: https://fb.com/iamjafran
-• Website: https://browser.jafran.online
+---
 
-TECHNOLOGIES USED:
-• Tailwind CSS (https://tailwindcss.com)
-• html2canvas (https://html2canvas.hertzen.com)
-• Various IP geolocation APIs
-• Modern Web APIs and browser capabilities
+## 👨‍💻 Developer & Credits
 
-LICENSE:
+**Jafran Hasan**
+- 🌐 Website: [browser.jafran.online](https://browser.jafran.online)
+- 👤 Facebook: [fb.com/iamjafran](https://fb.com/iamjafran)
+
+### Technologies Used
+- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS framework
+- [html2canvas](https://html2canvas.hertzen.com) - Screenshot generation
+- Various IP geolocation APIs
+- Modern Web APIs and browser capabilities
+
+### License
 This project is created for educational and development purposes.
 Please respect privacy and use responsibly.
 
-===============================================================================
-SUPPORT & FEEDBACK
-===============================================================================
+---
 
-FEEDBACK FORM:
-https://forms.gle/u4QjCHiyN8gJzPBD8
+## 🆘 Support & Feedback
 
-CONTACT:
-• Facebook: https://fb.com/iamjafran
-• Website: https://browser.jafran.online
+### 📝 Feedback Form
+[https://forms.gle/u4QjCHiyN8gJzPBD8](https://forms.gle/u4QjCHiyN8gJzPBD8)
 
-ISSUES & SUGGESTIONS:
-• Use the feedback form for bug reports
-• Suggest new features or improvements
-• Report browser compatibility issues
+### 📞 Contact
+- **Facebook:** [fb.com/iamjafran](https://fb.com/iamjafran)
+- **Website:** [browser.jafran.online](https://browser.jafran.online)
 
-===============================================================================
-FREQUENTLY ASKED QUESTIONS
-===============================================================================
+### 🐛 Issues & Suggestions
+- Use the feedback form for bug reports
+- Suggest new features or improvements
+- Report browser compatibility issues
 
-Q: Is my data stored anywhere?
-A: No, all data is processed locally in your browser. Nothing is stored on servers.
+---
 
-Q: How does sharing work?
-A: Data is encoded in the URL itself. When you share a link, the data travels 
-   directly through the URL parameters.
+## ❓ Frequently Asked Questions
 
-Q: Why do some shared links show "Unknown" values?
-A: Older share links or links from different browser versions may have limited 
-   data. New shares include comprehensive information.
+<details>
+<summary><strong>Is my data stored anywhere?</strong></summary>
+<br>
+No, all data is processed locally in your browser. Nothing is stored on servers.
+</details>
 
-Q: Is this tool safe to use?
-A: Yes, it only reads publicly available browser information and doesn't 
-   access any personal data, passwords, or sensitive information.
+<details>
+<summary><strong>How does sharing work?</strong></summary>
+<br>
+Data is encoded in the URL itself. When you share a link, the data travels directly through the URL parameters.
+</details>
 
-Q: Can I use this for commercial purposes?
-A: Contact the developer for commercial licensing and usage permissions.
+<details>
+<summary><strong>Why do some shared links show "Unknown" values?</strong></summary>
+<br>
+Older share links or links from different browser versions may have limited data. New shares include comprehensive information.
+</details>
 
-Q: How accurate is the location information?
-A: Location is based on IP geolocation, which is generally accurate to city 
-   level but may vary depending on your internet provider.
+<details>
+<summary><strong>Is this tool safe to use?</strong></summary>
+<br>
+Yes, it only reads publicly available browser information and doesn't access any personal data, passwords, or sensitive information.
+</details>
 
-===============================================================================
+<details>
+<summary><strong>Can I use this for commercial purposes?</strong></summary>
+<br>
+Contact the developer for commercial licensing and usage permissions.
+</details>
 
-Thank you for using Browser Detective! 🕵️‍♂️
+<details>
+<summary><strong>How accurate is the location information?</strong></summary>
+<br>
+Location is based on IP geolocation, which is generally accurate to city level but may vary depending on your internet provider.
+</details>
 
-For the latest updates and information, visit: https://browser.jafran.online
+---
 
-=============================================================================== 
+## 🎯 Live Demo
+
+**Try it now:** [https://browser.jafran.online](https://browser.jafran.online)
+
+---
+
+<div align="center">
+
+**Thank you for using Browser Detective!** 🕵️‍♂️
+
+For the latest updates and information, visit: [browser.jafran.online](https://browser.jafran.online)
+
+</div> 
