@@ -1645,25 +1645,194 @@
             sessionInfo.appendChild(createInfoRow('Character Set', document.characterSet));
         }
 
-        function shareInfo() {
-            const info = {
-                browser: getBrowserInfo(),
-                os: getOperatingSystem(),
-                screen: `${screen.width}x${screen.height}`,
-                language: navigator.language,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                timestamp: new Date().toISOString()
-            };
-
-            const encodedInfo = encodeURIComponent(JSON.stringify(info));
-            const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encodedInfo}`;
+        async function shareInfo() {
+            showToast('Collecting comprehensive data for sharing...', 'info');
             
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                showToast('Shareable link copied to clipboard!', 'success');
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                showToast('Failed to copy link', 'error');
-            });
+            try {
+                // Collect all comprehensive data
+                const browserInfo = getBrowserInfo();
+                const osInfo = getOperatingSystem();
+                const networkInfo = getNetworkInfo();
+                const securityInfo = getSecurityInfo();
+                const performanceInfo = getPerformanceInfo();
+                const mediaCapabilities = getMediaCapabilities();
+                
+                // Get IP info (might take a moment)
+                let ipInfo = null;
+                try {
+                    ipInfo = await getIPInfo();
+                } catch (error) {
+                    console.warn('Failed to get IP info for sharing:', error);
+                    ipInfo = {
+                        ip: 'Unknown', city: 'Unknown', region: 'Unknown', country: 'Unknown',
+                        countryCode: 'Unknown', latitude: 'Unknown', longitude: 'Unknown',
+                        isp: 'Unknown', asn: 'Unknown', postal: 'Unknown', timezone: 'Unknown'
+                    };
+                }
+
+                const info = {
+                    // Browser Details
+                    browser: {
+                        name: browserInfo.browserName,
+                        version: browserInfo.browserVersion,
+                        variant: browserInfo.variant,
+                        majorVersion: browserInfo.browserVersion.split('.')[0],
+                        engine: browserInfo.engineName,
+                        engineVersion: browserInfo.engineVersion,
+                        vendor: navigator.vendor || 'Unknown',
+                        language: navigator.language,
+                        languages: navigator.languages?.slice(0, 5) || [],
+                        javaEnabled: browserInfo.javaEnabled,
+                        cookiesEnabled: browserInfo.cookiesEnabled,
+                        onlineStatus: browserInfo.onlineStatus,
+                        doNotTrack: browserInfo.doNotTrack,
+                        userAgent: navigator.userAgent
+                    },
+                    
+                    // System Information
+                    system: {
+                        os: osInfo.os,
+                        osVersion: osInfo.osVersion,
+                        architecture: osInfo.architecture,
+                        platform: navigator.platform,
+                        hardwareConcurrency: browserInfo.hardwareConcurrency,
+                        deviceMemory: browserInfo.deviceMemory,
+                        maxTouchPoints: navigator.maxTouchPoints || 0
+                    },
+                    
+                    // Display & Device
+                    display: {
+                        screenResolution: `${screen.width} × ${screen.height}`,
+                        availableScreen: `${screen.availWidth} × ${screen.availHeight}`,
+                        colorDepth: screen.colorDepth,
+                        pixelRatio: window.devicePixelRatio,
+                        touchSupport: 'ontouchstart' in window,
+                        orientation: screen.orientation?.type || 'Unknown',
+                        viewport: `${window.innerWidth} × ${window.innerHeight}`
+                    },
+                    
+                    // Network & Location
+                    network: {
+                        ip: ipInfo.ip,
+                        city: ipInfo.city,
+                        region: ipInfo.region,
+                        country: ipInfo.country,
+                        countryCode: ipInfo.countryCode,
+                        latitude: ipInfo.latitude,
+                        longitude: ipInfo.longitude,
+                        isp: ipInfo.isp,
+                        asn: ipInfo.asn,
+                        postal: ipInfo.postal,
+                        ipTimezone: ipInfo.timezone,
+                        connectionType: networkInfo.effectiveType,
+                        downlink: networkInfo.downlink,
+                        rtt: networkInfo.rtt,
+                        saveData: networkInfo.saveData,
+                        browserTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        timezoneOffset: new Date().getTimezoneOffset()
+                    },
+                    
+                    // Technical Features
+                    technical: {
+                        localStorage: browserInfo.localStorage,
+                        sessionStorage: browserInfo.sessionStorage,
+                        indexedDB: browserInfo.indexedDB,
+                        webCrypto: browserInfo.webCrypto,
+                        webGL: browserInfo.webGL,
+                        webGL2: browserInfo.webGL2,
+                        webWorkers: browserInfo.webWorkers,
+                        serviceWorkers: browserInfo.serviceWorker,
+                        webAssembly: browserInfo.webAssembly,
+                        sharedArrayBuffer: browserInfo.sharedArrayBuffer,
+                        fetchAPI: browserInfo.fetch,
+                        promises: browserInfo.promises,
+                        es6Modules: browserInfo.modules,
+                        intersectionObserver: browserInfo.intersectionObserver,
+                        mutationObserver: browserInfo.mutationObserver,
+                        webRTC: browserInfo.webRTC,
+                        webAudio: browserInfo.webAudio,
+                        mediaDevices: browserInfo.mediaDevices,
+                        getUserMedia: browserInfo.getUserMedia,
+                        geolocation: 'geolocation' in navigator,
+                        permissions: browserInfo.permissions,
+                        credentials: browserInfo.credentials,
+                        sendBeacon: browserInfo.sendBeacon
+                    },
+                    
+                    // Security & Privacy
+                    security: {
+                        https: location.protocol === 'https:',
+                        cookiesEnabled: securityInfo.cookieEnabled,
+                        doNotTrack: securityInfo.doNotTrack,
+                        webRTC: securityInfo.webrtc,
+                        permissions: securityInfo.permissions,
+                        serviceWorker: securityInfo.serviceWorker,
+                        pushManager: securityInfo.pushManager,
+                        notifications: securityInfo.notifications,
+                        webDriver: browserInfo.webDriver
+                    },
+                    
+                    // Performance & Memory
+                    performance: {
+                        jsHeapLimit: performanceInfo.jsHeapSizeLimit,
+                        totalJSHeap: performanceInfo.totalJSHeapSize,
+                        usedJSHeap: performanceInfo.usedJSHeapSize,
+                        loadTime: performanceInfo.loadTime,
+                        domReady: performanceInfo.domReady,
+                        navigationType: performance.navigation?.type || 'Unknown'
+                    },
+                    
+                    // Media & Audio
+                    media: {
+                        mp3: mediaCapabilities.mp3,
+                        wav: mediaCapabilities.wav,
+                        ogg: mediaCapabilities.ogg,
+                        mp4: mediaCapabilities.mp4,
+                        webm: mediaCapabilities.webm,
+                        h264: mediaCapabilities.h264,
+                        av1: mediaCapabilities.av1,
+                        webAudio: 'AudioContext' in window
+                    },
+                    
+                    // Session Information
+                    session: {
+                        timestamp: new Date().toISOString(),
+                        url: window.location.href,
+                        referrer: document.referrer || 'Direct',
+                        title: document.title,
+                        characterSet: document.characterSet,
+                        historyLength: history.length
+                    }
+                };
+
+                const jsonString = JSON.stringify(info);
+                const encodedInfo = encodeURIComponent(jsonString);
+                const shareUrl = `${window.location.origin}${window.location.pathname}?data=${encodedInfo}`;
+                
+                // Check URL length and warn user
+                console.log('Generated share URL length:', shareUrl.length);
+                console.log('JSON data size:', jsonString.length, 'characters');
+                console.log('Encoded data size:', encodedInfo.length, 'characters');
+                
+                if (shareUrl.length > 8000) {
+                    console.warn('Share URL is very long:', shareUrl.length, 'characters');
+                    showToast(`Warning: Share URL is ${shareUrl.length} characters long. Some browsers may not support URLs this long.`, 'info');
+                } else if (shareUrl.length > 2048) {
+                    console.warn('Share URL is long:', shareUrl.length, 'characters');
+                    showToast(`Share URL is ${shareUrl.length} characters long. Should work in most modern browsers.`, 'info');
+                }
+                
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    showToast('Complete browser data copied to clipboard!', 'success');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showToast('Failed to copy link', 'error');
+                });
+                
+            } catch (error) {
+                console.error('Error collecting data for sharing:', error);
+                showToast('Failed to collect sharing data', 'error');
+            }
         }
 
         function downloadAsImage() {
@@ -2010,45 +2179,257 @@
             // Show the reset button when viewing shared data
             document.getElementById('reset-to-my-data-btn').style.display = 'flex';
             
+            // Check if this is new comprehensive data format or old format
+            const isComprehensiveData = data.browser && typeof data.browser === 'object' && data.browser.name;
+            
             // Update timestamp and add indicator for shared data
+            const timestamp = isComprehensiveData ? data.session?.timestamp : data.timestamp;
             document.getElementById('timestamp-display').textContent = 
-                `📤 Viewing shared data from ${new Date(data.timestamp).toLocaleString()}`;
+                `📤 Viewing shared data from ${new Date(timestamp).toLocaleString()}`;
 
-            // Browser Details
-            const browserInfo = document.getElementById('browser-info');
-            browserInfo.innerHTML = '';
-            browserInfo.appendChild(createInfoRow('Browser', data.browser.browserName));
-            browserInfo.appendChild(createInfoRow('Version', data.browser.browserVersion));
-            browserInfo.appendChild(createInfoRow('Engine', data.browser.engineName));
-            browserInfo.appendChild(createInfoRow('Major Version', data.browser.browserVersion.split('.')[0]));
-            browserInfo.appendChild(createInfoRow('Language', data.language));
-            browserInfo.appendChild(createInfoRow('Timezone', data.timezone));
-            browserInfo.appendChild(createInfoRow('Data Source', 'Shared Link'));
+            // Always show comprehensive data - use available data or fallbacks
+            if (isComprehensiveData) {
+                // NEW: Full comprehensive data display
+                
+                // Browser Details
+                const browserInfo = document.getElementById('browser-info');
+                browserInfo.innerHTML = '';
+                browserInfo.appendChild(createInfoRow('Browser', data.browser.name));
+                browserInfo.appendChild(createInfoRow('Variant', data.browser.variant));
+                browserInfo.appendChild(createInfoRow('Version', data.browser.version));
+                browserInfo.appendChild(createInfoRow('Major Version', data.browser.majorVersion));
+                browserInfo.appendChild(createInfoRow('Engine', data.browser.engine));
+                browserInfo.appendChild(createInfoRow('Engine Version', data.browser.engineVersion));
+                browserInfo.appendChild(createInfoRow('Vendor', data.browser.vendor));
+                browserInfo.appendChild(createInfoRow('Language', data.browser.language));
+                if (data.browser.languages?.length) {
+                    browserInfo.appendChild(createInfoRow('Languages', data.browser.languages.join(', ')));
+                }
+                browserInfo.appendChild(createInfoRow('Java Enabled', data.browser.javaEnabled));
+                browserInfo.appendChild(createInfoRow('Cookies Enabled', data.browser.cookiesEnabled));
+                browserInfo.appendChild(createInfoRow('Online Status', data.browser.onlineStatus));
+                browserInfo.appendChild(createInfoRow('Do Not Track', data.browser.doNotTrack));
+                browserInfo.appendChild(createInfoRow('Data Source', 'Shared Link'));
 
-            // System Information
-            const systemInfo = document.getElementById('system-info');
-            systemInfo.innerHTML = '';
-            systemInfo.appendChild(createInfoRow('Operating System', data.os.os));
-            systemInfo.appendChild(createInfoRow('OS Version', data.os.osVersion));
-            systemInfo.appendChild(createInfoRow('Architecture', data.os.architecture));
-            systemInfo.appendChild(createInfoRow('Screen Resolution', data.screen));
-            systemInfo.appendChild(createInfoRow('Shared At', new Date(data.timestamp).toLocaleString()));
+                // System Information
+                const systemInfo = document.getElementById('system-info');
+                systemInfo.innerHTML = '';
+                systemInfo.appendChild(createInfoRow('Operating System', data.system.os));
+                systemInfo.appendChild(createInfoRow('OS Version', data.system.osVersion));
+                systemInfo.appendChild(createInfoRow('Architecture', data.system.architecture));
+                systemInfo.appendChild(createInfoRow('Platform', data.system.platform));
+                systemInfo.appendChild(createInfoRow('CPU Cores', data.system.hardwareConcurrency));
+                systemInfo.appendChild(createInfoRow('Device Memory', data.system.deviceMemory !== 'Unknown' ? `${data.system.deviceMemory} GB` : 'Unknown'));
+                systemInfo.appendChild(createInfoRow('Max Touch Points', data.system.maxTouchPoints));
+                systemInfo.appendChild(createInfoRow('Shared At', new Date(timestamp).toLocaleString()));
 
-            // Display & Device - Limited info for shared data
-            const displayInfo = document.getElementById('display-info');
-            displayInfo.innerHTML = '';
-            displayInfo.appendChild(createInfoRow('Screen Resolution', data.screen));
-            displayInfo.appendChild(createInfoRow('Data Type', 'Shared Information'));
-            displayInfo.appendChild(createInfoRow('Status', 'External Data'));
+                // Display & Device
+                const displayInfo = document.getElementById('display-info');
+                displayInfo.innerHTML = '';
+                displayInfo.appendChild(createInfoRow('Screen Resolution', data.display.screenResolution));
+                displayInfo.appendChild(createInfoRow('Available Screen', data.display.availableScreen));
+                displayInfo.appendChild(createInfoRow('Color Depth', `${data.display.colorDepth} bits`));
+                displayInfo.appendChild(createInfoRow('Pixel Ratio', data.display.pixelRatio));
+                displayInfo.appendChild(createInfoRow('Touch Support', data.display.touchSupport));
+                displayInfo.appendChild(createInfoRow('Orientation', data.display.orientation));
+                displayInfo.appendChild(createInfoRow('Viewport', data.display.viewport));
 
-            // Clear other sections for shared data
-            const sectionsToHide = ['network-info', 'technical-info', 'security-info', 'performance-info', 'media-info', 'session-info'];
-            sectionsToHide.forEach(sectionId => {
-                const section = document.getElementById(sectionId);
-                section.innerHTML = '';
-                section.appendChild(createInfoRow('Notice', 'Data not available in shared mode'));
-                section.appendChild(createInfoRow('Reason', 'Privacy and security protection'));
-            });
+                // Network & Location
+                const networkInfo = document.getElementById('network-info');
+                networkInfo.innerHTML = '';
+                networkInfo.appendChild(createInfoRow('Public IP', data.network.ip, true));
+                networkInfo.appendChild(createInfoRow('ISP', data.network.isp));
+                networkInfo.appendChild(createInfoRow('ASN', data.network.asn));
+                networkInfo.appendChild(createInfoRow('City', data.network.city));
+                networkInfo.appendChild(createInfoRow('Region', data.network.region));
+                networkInfo.appendChild(createInfoRow('Country', `${data.network.country} (${data.network.countryCode})`));
+                networkInfo.appendChild(createInfoRow('Postal Code', data.network.postal));
+                if (data.network.latitude !== 'Unknown' && data.network.longitude !== 'Unknown') {
+                    networkInfo.appendChild(createInfoRow('Coordinates', `${data.network.latitude}, ${data.network.longitude}`, true));
+                }
+                networkInfo.appendChild(createInfoRow('IP Timezone', data.network.ipTimezone));
+                networkInfo.appendChild(createInfoRow('Connection Type', data.network.connectionType));
+                networkInfo.appendChild(createInfoRow('Browser Timezone', data.network.browserTimezone));
+
+                // Technical Features
+                const technicalInfo = document.getElementById('technical-info');
+                technicalInfo.innerHTML = '';
+                technicalInfo.appendChild(createInfoRow('Local Storage', data.technical.localStorage));
+                technicalInfo.appendChild(createInfoRow('Session Storage', data.technical.sessionStorage));
+                technicalInfo.appendChild(createInfoRow('IndexedDB', data.technical.indexedDB));
+                technicalInfo.appendChild(createInfoRow('Web Crypto API', data.technical.webCrypto));
+                technicalInfo.appendChild(createInfoRow('WebGL', data.technical.webGL));
+                technicalInfo.appendChild(createInfoRow('WebGL2', data.technical.webGL2));
+                technicalInfo.appendChild(createInfoRow('Web Workers', data.technical.webWorkers));
+                technicalInfo.appendChild(createInfoRow('Service Workers', data.technical.serviceWorkers));
+                technicalInfo.appendChild(createInfoRow('WebAssembly', data.technical.webAssembly));
+                technicalInfo.appendChild(createInfoRow('SharedArrayBuffer', data.technical.sharedArrayBuffer));
+                technicalInfo.appendChild(createInfoRow('Fetch API', data.technical.fetchAPI));
+                technicalInfo.appendChild(createInfoRow('WebRTC', data.technical.webRTC));
+                technicalInfo.appendChild(createInfoRow('Geolocation', data.technical.geolocation));
+
+                // Security & Privacy
+                const securityInfo = document.getElementById('security-info');
+                securityInfo.innerHTML = '';
+                securityInfo.appendChild(createInfoRow('HTTPS', data.security.https));
+                securityInfo.appendChild(createInfoRow('Cookies Enabled', data.security.cookiesEnabled));
+                securityInfo.appendChild(createInfoRow('Do Not Track', data.security.doNotTrack));
+                securityInfo.appendChild(createInfoRow('WebRTC', data.security.webRTC));
+                securityInfo.appendChild(createInfoRow('Permissions API', data.security.permissions));
+                securityInfo.appendChild(createInfoRow('Service Worker', data.security.serviceWorker));
+                securityInfo.appendChild(createInfoRow('Push Manager', data.security.pushManager));
+                securityInfo.appendChild(createInfoRow('Notifications', data.security.notifications));
+                securityInfo.appendChild(createInfoRow('WebDriver', data.security.webDriver));
+
+                // Performance & Memory
+                const performanceInfo = document.getElementById('performance-info');
+                performanceInfo.innerHTML = '';
+                performanceInfo.appendChild(createInfoRow('JS Heap Limit', data.performance.jsHeapLimit));
+                performanceInfo.appendChild(createInfoRow('Total JS Heap', data.performance.totalJSHeap));
+                performanceInfo.appendChild(createInfoRow('Used JS Heap', data.performance.usedJSHeap));
+                performanceInfo.appendChild(createInfoRow('Page Load Time', data.performance.loadTime));
+                performanceInfo.appendChild(createInfoRow('DOM Ready Time', data.performance.domReady));
+                performanceInfo.appendChild(createInfoRow('Navigation Type', data.performance.navigationType));
+
+                // Media & Audio
+                const mediaInfo = document.getElementById('media-info');
+                mediaInfo.innerHTML = '';
+                mediaInfo.appendChild(createInfoRow('MP3 Support', data.media.mp3));
+                mediaInfo.appendChild(createInfoRow('WAV Support', data.media.wav));
+                mediaInfo.appendChild(createInfoRow('OGG Support', data.media.ogg));
+                mediaInfo.appendChild(createInfoRow('MP4 Support', data.media.mp4));
+                mediaInfo.appendChild(createInfoRow('WebM Support', data.media.webm));
+                mediaInfo.appendChild(createInfoRow('H.264 Support', data.media.h264));
+                mediaInfo.appendChild(createInfoRow('AV1 Support', data.media.av1));
+                mediaInfo.appendChild(createInfoRow('Web Audio API', data.media.webAudio));
+
+                // Session Information
+                const sessionInfo = document.getElementById('session-info');
+                sessionInfo.innerHTML = '';
+                sessionInfo.appendChild(createInfoRow('Data Collected', new Date(data.session.timestamp).toLocaleString()));
+                sessionInfo.appendChild(createInfoRow('Original URL', data.session.url, true));
+                sessionInfo.appendChild(createInfoRow('Referrer', data.session.referrer));
+                sessionInfo.appendChild(createInfoRow('Page Title', data.session.title));
+                sessionInfo.appendChild(createInfoRow('Character Set', data.session.characterSet));
+                sessionInfo.appendChild(createInfoRow('History Length', data.session.historyLength));
+                sessionInfo.appendChild(createInfoRow('User Agent', data.browser.userAgent, true));
+                
+            } else {
+                // Legacy data format - populate all sections with available data
+                
+                // Browser Details
+                const browserInfo = document.getElementById('browser-info');
+                browserInfo.innerHTML = '';
+                browserInfo.appendChild(createInfoRow('Browser', data.browser?.browserName || 'Unknown'));
+                browserInfo.appendChild(createInfoRow('Version', data.browser?.browserVersion || 'Unknown'));
+                browserInfo.appendChild(createInfoRow('Engine', data.browser?.engineName || 'Unknown'));
+                if (data.browser?.browserVersion) {
+                    browserInfo.appendChild(createInfoRow('Major Version', data.browser.browserVersion.split('.')[0]));
+                }
+                browserInfo.appendChild(createInfoRow('Language', data.language || 'Unknown'));
+                browserInfo.appendChild(createInfoRow('Timezone', data.timezone || 'Unknown'));
+                browserInfo.appendChild(createInfoRow('Java Enabled', data.browser?.javaEnabled || 'Unknown'));
+                browserInfo.appendChild(createInfoRow('Cookies Enabled', data.browser?.cookiesEnabled || 'Unknown'));
+                browserInfo.appendChild(createInfoRow('Do Not Track', data.browser?.doNotTrack || 'Unknown'));
+                browserInfo.appendChild(createInfoRow('Data Source', 'Shared Link'));
+
+                // System Information
+                const systemInfo = document.getElementById('system-info');
+                systemInfo.innerHTML = '';
+                systemInfo.appendChild(createInfoRow('Operating System', data.os?.os || 'Unknown'));
+                systemInfo.appendChild(createInfoRow('OS Version', data.os?.osVersion || 'Unknown'));
+                systemInfo.appendChild(createInfoRow('Architecture', data.os?.architecture || 'Unknown'));
+                systemInfo.appendChild(createInfoRow('Platform', 'Unknown'));
+                systemInfo.appendChild(createInfoRow('CPU Cores', 'Unknown'));
+                systemInfo.appendChild(createInfoRow('Device Memory', 'Unknown'));
+                systemInfo.appendChild(createInfoRow('Max Touch Points', 'Unknown'));
+                systemInfo.appendChild(createInfoRow('Shared At', new Date(timestamp).toLocaleString()));
+
+                // Display & Device
+                const displayInfo = document.getElementById('display-info');
+                displayInfo.innerHTML = '';
+                displayInfo.appendChild(createInfoRow('Screen Resolution', data.screen || 'Unknown'));
+                displayInfo.appendChild(createInfoRow('Available Screen', 'Unknown'));
+                displayInfo.appendChild(createInfoRow('Color Depth', 'Unknown'));
+                displayInfo.appendChild(createInfoRow('Pixel Ratio', 'Unknown'));
+                displayInfo.appendChild(createInfoRow('Touch Support', 'Unknown'));
+                displayInfo.appendChild(createInfoRow('Orientation', 'Unknown'));
+                displayInfo.appendChild(createInfoRow('Viewport', 'Unknown'));
+
+                // Network & Location - Try to extract any available network data
+                const networkInfo = document.getElementById('network-info');
+                networkInfo.innerHTML = '';
+                networkInfo.appendChild(createInfoRow('Public IP', 'Unknown'));
+                networkInfo.appendChild(createInfoRow('ISP', 'Unknown'));
+                networkInfo.appendChild(createInfoRow('ASN', 'Unknown'));
+                networkInfo.appendChild(createInfoRow('City', 'Unknown'));
+                networkInfo.appendChild(createInfoRow('Region', 'Unknown'));
+                networkInfo.appendChild(createInfoRow('Country', 'Unknown'));
+                networkInfo.appendChild(createInfoRow('Postal Code', 'Unknown'));
+                networkInfo.appendChild(createInfoRow('IP Timezone', 'Unknown'));
+                networkInfo.appendChild(createInfoRow('Connection Type', 'Unknown'));
+                networkInfo.appendChild(createInfoRow('Browser Timezone', data.timezone || 'Unknown'));
+
+                // Technical Features
+                const technicalInfo = document.getElementById('technical-info');
+                technicalInfo.innerHTML = '';
+                technicalInfo.appendChild(createInfoRow('Local Storage', data.browser?.localStorage || 'Unknown'));
+                technicalInfo.appendChild(createInfoRow('Session Storage', data.browser?.sessionStorage || 'Unknown'));
+                technicalInfo.appendChild(createInfoRow('IndexedDB', data.browser?.indexedDB || 'Unknown'));
+                technicalInfo.appendChild(createInfoRow('Web Crypto API', data.browser?.webCrypto || 'Unknown'));
+                technicalInfo.appendChild(createInfoRow('WebGL', data.browser?.webGL || 'Unknown'));
+                technicalInfo.appendChild(createInfoRow('WebGL2', data.browser?.webGL2 || 'Unknown'));
+                technicalInfo.appendChild(createInfoRow('Web Workers', data.browser?.webWorkers || 'Unknown'));
+                technicalInfo.appendChild(createInfoRow('Service Workers', data.browser?.serviceWorker || 'Unknown'));
+                technicalInfo.appendChild(createInfoRow('WebAssembly', data.browser?.webAssembly || 'Unknown'));
+                technicalInfo.appendChild(createInfoRow('WebRTC', data.browser?.webRTC || 'Unknown'));
+                technicalInfo.appendChild(createInfoRow('Note', 'Limited data from older share format'));
+
+                // Security & Privacy
+                const securityInfo = document.getElementById('security-info');
+                securityInfo.innerHTML = '';
+                securityInfo.appendChild(createInfoRow('HTTPS', 'Unknown'));
+                securityInfo.appendChild(createInfoRow('Cookies Enabled', data.browser?.cookiesEnabled || 'Unknown'));
+                securityInfo.appendChild(createInfoRow('Do Not Track', data.browser?.doNotTrack || 'Unknown'));
+                securityInfo.appendChild(createInfoRow('WebRTC', data.browser?.webRTC || 'Unknown'));
+                securityInfo.appendChild(createInfoRow('Permissions API', data.browser?.permissions || 'Unknown'));
+                securityInfo.appendChild(createInfoRow('Service Worker', data.browser?.serviceWorker || 'Unknown'));
+                securityInfo.appendChild(createInfoRow('Push Manager', 'Unknown'));
+                securityInfo.appendChild(createInfoRow('Notifications', 'Unknown'));
+
+                // Performance & Memory
+                const performanceInfo = document.getElementById('performance-info');
+                performanceInfo.innerHTML = '';
+                performanceInfo.appendChild(createInfoRow('JS Heap Limit', 'Unknown'));
+                performanceInfo.appendChild(createInfoRow('Total JS Heap', 'Unknown'));
+                performanceInfo.appendChild(createInfoRow('Used JS Heap', 'Unknown'));
+                performanceInfo.appendChild(createInfoRow('Page Load Time', 'Unknown'));
+                performanceInfo.appendChild(createInfoRow('DOM Ready Time', 'Unknown'));
+                performanceInfo.appendChild(createInfoRow('Navigation Type', 'Unknown'));
+
+                // Media & Audio
+                const mediaInfo = document.getElementById('media-info');
+                mediaInfo.innerHTML = '';
+                mediaInfo.appendChild(createInfoRow('MP3 Support', 'Unknown'));
+                mediaInfo.appendChild(createInfoRow('WAV Support', 'Unknown'));
+                mediaInfo.appendChild(createInfoRow('OGG Support', 'Unknown'));
+                mediaInfo.appendChild(createInfoRow('MP4 Support', 'Unknown'));
+                mediaInfo.appendChild(createInfoRow('WebM Support', 'Unknown'));
+                mediaInfo.appendChild(createInfoRow('H.264 Support', 'Unknown'));
+                mediaInfo.appendChild(createInfoRow('AV1 Support', 'Unknown'));
+                mediaInfo.appendChild(createInfoRow('Web Audio API', 'Unknown'));
+
+                // Session Information
+                const sessionInfo = document.getElementById('session-info');
+                sessionInfo.innerHTML = '';
+                sessionInfo.appendChild(createInfoRow('Data Collected', new Date(timestamp).toLocaleString()));
+                sessionInfo.appendChild(createInfoRow('Original URL', 'Unknown'));
+                sessionInfo.appendChild(createInfoRow('Referrer', 'Unknown'));
+                sessionInfo.appendChild(createInfoRow('Page Title', 'Unknown'));
+                sessionInfo.appendChild(createInfoRow('Character Set', 'Unknown'));
+                sessionInfo.appendChild(createInfoRow('History Length', 'Unknown'));
+                sessionInfo.appendChild(createInfoRow('User Agent', data.browser?.userAgent || 'Unknown'));
+            }
         }
 
         // Check if there's shared data in URL
@@ -2058,13 +2439,36 @@
             
             if (sharedData) {
                 try {
-                    const data = JSON.parse(decodeURIComponent(sharedData));
+                    console.log('Shared data length:', sharedData.length);
+                    console.log('URL length:', window.location.href.length);
+                    
+                    // Check if URL is suspiciously long
+                    if (window.location.href.length > 8000) {
+                        console.warn('URL is very long:', window.location.href.length, 'characters');
+                        showToast('Warning: Shared URL is very long and may not work in all browsers', 'info');
+                    }
+                    
+                    const decodedData = decodeURIComponent(sharedData);
+                    console.log('Decoded data length:', decodedData.length);
+                    console.log('First 200 chars of decoded data:', decodedData.substring(0, 200));
+                    
+                    const data = JSON.parse(decodedData);
+                    console.log('Parsed data successfully:', Object.keys(data));
+                    
                     populateSharedInfo(data);
                     showToast('Loaded shared browser data!', 'success');
                     return true;
                 } catch (e) {
                     console.error('Error parsing shared data:', e);
-                    showToast('Failed to load shared data', 'error');
+                    console.error('Raw shared data (first 500 chars):', sharedData.substring(0, 500));
+                    
+                    if (e.name === 'SyntaxError') {
+                        showToast('Shared data format is invalid or corrupted', 'error');
+                    } else if (e.message.includes('URI')) {
+                        showToast('Shared URL contains invalid characters', 'error');
+                    } else {
+                        showToast('Failed to load shared data: ' + e.message, 'error');
+                    }
                     return false;
                 }
             }
